@@ -1,0 +1,75 @@
+{% extends "invoice_base.html" %}
+{% block title %}IOL Invoice{% endblock %}
+{% block content %}
+  
+
+
+  <!-- Page Content -->
+<div class="container" style="margin-top:60px; margin-bottom: 70px;">  
+
+ <main role="main" class="container">
+
+  <div class="starter-template">
+    <h1>IOL Invoice</h1>
+    
+
+     <div class="row">
+      <div class="col-12">
+    
+    
+    <span>Found Invoice: Client {{ found_invoice.businessname }} Invoice Number {{ found_invoice.invoice_number }}</span>
+    </div>
+    
+     
+      <div class="col-sm-6 portfolio-item">
+       <form method="POST" action="/invoicenumberresults" enctype="multipart/form-data" id="invoice-number-results">
+          <div class="form-group">
+         <input type="hidden" class="form-control" id="invoicenumber" name="invoice_number" value="{{ found_invoice.invoice_number }}" />
+    <input type="submit" class="btn btn-primary btn-sm btn-info" value="View">
+    </form>
+    </div>
+    </div>
+        
+       <div class="col-sm-6 portfolio-item">
+        <form method="POST" action="/editinvoice">
+          <div class="form-group">
+         <input type="hidden" class="form-control" id="invoicenumber" name="invoice_number" value="{{ found_invoice.invoice_number }}" />
+    <button class="btn btn-primary btn-sm btn-info" type="submit" style="margin-top: 20px;">Edit</button>
+    </form>
+    </div>
+    <div class="progress" id="loader">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Processing Form</div>
+</div>
+    </div>
+    </div>
+    </div>
+    
+    
+
+    
+    
+    
+
+ 
+   
+</main><!-- /.container -->
+
+ </div>
+
+<script src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+      
+    $(document).ready(function () {
+      
+    $("form#invoice-number-results").submit(function(event){
+    //event.preventDefault();
+    $("#loader").show();
+  //alert("form submiting");
+    return true;
+    });
+      
+    });
+</script>
+{% endblock %}
+
+

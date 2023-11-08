@@ -1,0 +1,15 @@
+2021-10-14 14:26:42.850 CEST [13628] LOG:  starting PostgreSQL 13.3 on arm-unknown-linux-androideabi, compiled by Android (6454773 based on r365631c2) clang version 9.0.8 (https://android.googlesource.com/toolchain/llvm-project 98c855489587874b2a325e7a516b99d838599c6f) (based on LLVM 9.0.8svn), 32-bit
+2021-10-14 14:26:42.853 CEST [13628] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2021-10-14 14:26:42.856 CEST [13628] LOG:  listening on Unix socket "/data/data/com.termux/files/usr/tmp/.s.PGSQL.5432"
+2021-10-14 14:26:42.870 CEST [13632] LOG:  database system was shut down at 2021-10-14 14:25:54 CEST
+2021-10-14 14:26:42.888 CEST [13628] LOG:  database system is ready to accept connections
+2021-10-14 14:28:48.502 CEST [15863] FATAL:  database "u0_a263" does not exist
+2021-10-14 14:34:53.606 CEST [13636] LOG:  using stale statistics instead of current ones because stats collector is not responding
+2021-10-14 17:05:49.666 CEST [13636] LOG:  using stale statistics instead of current ones because stats collector is not responding
+2021-10-14 17:06:00.015 CEST [26731] LOG:  using stale statistics instead of current ones because stats collector is not responding
+2021-10-14 18:04:00.628 CEST [13628] LOG:  received fast shutdown request
+2021-10-14 18:04:00.628 CEST [13638] ERROR:  canceling statement due to user request
+2021-10-14 18:04:00.631 CEST [13628] LOG:  aborting any active transactions
+2021-10-14 18:04:00.634 CEST [13628] LOG:  background worker "logical replication launcher" (PID 13638) exited with exit code 1
+2021-10-14 18:04:00.637 CEST [13633] LOG:  shutting down
+2021-10-14 18:04:00.700 CEST [13628] LOG:  database system is shut down

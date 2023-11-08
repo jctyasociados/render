@@ -1,0 +1,30 @@
+{% extends "invoice_base.html" %}
+{% block title %}Invoice{% endblock %}
+{% block content %}
+  
+
+
+  <!-- Page Content -->
+  <div class="container" style="margin-top: 60px; margin-bottom: 100px;">
+
+<h2>Show Profile</h2>
+<span><strong>Business Name</strong></span><br />
+<span>{{ profile.businessname }}</span><br />
+<span><strong>Email</strong></span><br />
+<span>{{ profile.email }}</span><br />
+<span><strong>EIN</strong></span><br />
+<span>{{ profile.ein }}</span><br />
+<span><strong>Address1</strong></span><br />
+<span>{{ profile.address1 }}</span><br />
+<span><strong>Address2</strong></span><br />
+<span>{{ profile.addrress2 }}</span><br />
+<span><strong>City</strong></span><br />
+<span>{{ profile.city }}</span><br />
+<span><strong>State</strong></span><br />
+<span>{{ profile.state }}</span><br />
+<span><strong>ZIP</strong></span><br />
+<span>{{ profile.zip }}</span>
+</div>
+<script src="js/jquery-3.2.1.min.js"></script>
+  
+{% endblock %}

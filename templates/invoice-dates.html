@@ -1,0 +1,84 @@
+{% extends "invoice_base.html" %}
+{% block title %}IOL Invoice{% endblock %}
+{% block content %}
+  
+
+
+  <!-- Page Content -->
+  <div class="container" style="margin-top: 60px; margin-bottom: 100px;">
+
+ <main role="main" class="container">
+
+  <div class="starter-template">
+    <h1>IOL Invoice</h1>
+    <form method="POST" action="/invoicebydates">
+    <div class="row">
+      <div class="col-lg-6"> 
+      <div class="form-group">
+      <label for="datepicker">Select Invoice Date Start</label>
+      <input type="text" name="date_start" id="datepicker" class="form-control datepicker" placeholder="yyyy-mm-dd" />
+      </div>
+      </div>
+      <div class="col-lg-6">
+      <div class="form-group">
+      <label for="datepicker2">Select Invoice Date End</label>
+      <input type="text" name="date_end" id="datepicker2" class="form-control datepicker2" placeholder="yyyy-mm-dd" />
+      </div>
+      </div>
+      </div>
+    <button class="btn btn-primary btn-lg btn-block" type="submit" style="margin-top: 20px;">Submit</button>
+</form>
+    </div> 
+   
+   
+
+   
+  </div>
+
+</main><!-- /.container -->
+
+
+</div>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script>
+$( document ).ready(function() {
+    // Set Datepicker
+		$(".datepicker").datepicker({
+    beforeShow: function (input, inst) {
+        setTimeout(function () {
+            inst.dpDiv.css({
+                top: $(".datepicker").offset().top + 45,
+                left: $(".datepicker").offset().left
+            });
+        }, 0);
+    }
+});
+
+$(".datepicker2").datepicker({
+    beforeShow: function (input, inst) {
+        setTimeout(function () {
+            inst.dpDiv.css({
+                top: $(".datepicker2").offset().top + 45,
+                left: $(".datepicker2").offset().left
+            });
+        }, 0);
+    }
+});
+    		
+		
+		
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+$(function(){
+    
+    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+    
+    $("#datepicker2").datepicker({ dateFormat: 'yy-mm-dd' });
+})
+});
+</script>
+
+{% endblock %}

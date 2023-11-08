@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  
+  <meta content="" name="description">
+
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+
+  
+<!-- Vendor CSS Files -->
+  <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/form-validation.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui.structure.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui.theme.css" />
+    <link rel="stylesheet" type="text/css" href="js/popup.css" />
+    <link rel="stylesheet" type="text/css" href="css/starter-template.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.external-png-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.icons-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.inline-png-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.inline-svg-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.structure-1.4.5.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.theme-1.4.5.css" />
+    
+    
+    
+    
+   
+   
+   <link rel='shortcut icon' type='image/x-icon' href='images/favicon.ico' />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+      
+  <!-- Custom styles for this template -->
+  <link href="css/modern-business.css" rel="stylesheet">
+  
+  <!-- <link href="css/custom.css" rel="stylesheet"> -->
+  <script src="https://www.google.com/recaptcha/api.js"></script>
+</head>
+<body>
+<!-- Navbar -->
+    
+    
+<!-- Navigation -->
+ <header id="header" class="header fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+     
+        <img src="assets/img/logo.png" alt="Logo">
+       
+     
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="/">Home</a></li>
+          <li><a class="nav-link scrollto" href="/login">Login/Register</a></li>
+          <li><a class="nav-link scrollto" href="/contact">Contact</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+  
+    {% block content %}
+    {% endblock %}
+  <hr>
+  
+  <!-- Footer -->
+   <footer id="footer" class="footer mt-auto py-3">
+  <div class="container">
+    <span class="text-muted">Place sticky footer content here.</span>
+  </div>
+</footer>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a> 
+    
+    
+    
+<script src="js/jquery-3.2.1.min.js"></script>   
+<script>
+$(document).ready(function () {
+    
+if(screen.availHeight > screen.availWidth){
+    //alert("portrait");
+    
+       $('#footer').addClass("fixed-bottom");
+    
+    
+}
+ if (screen.availHeight < screen.availWidth && screen.availHeight < 500){
+     
+     //alert("landscape");
+     $('#footer').removeClass("fixed-bottom");
+   // e.preventDefault();
+ }
+ else {
+    $('#footer').addClass("fixed-bottom"); 
+     
+ }
+ 
+$(window).on('resize', function(){
+   
+ if(screen.availHeight > screen.availWidth){
+    //alert("portrait");
+    
+       $('#footer').addClass("fixed-bottom");
+    
+    
+}
+ if (screen.availHeight < screen.availWidth && screen.availHeight < 500){
+     
+     //alert("landscape");
+     $('#footer').removeClass("fixed-bottom");
+   // e.preventDefault();
+ }
+ else {
+    $('#footer').addClass("fixed-bottom"); 
+     
+ }
+}); 
+ 
+});
+
+
+
+</script>
+ 
+    <script src="js/clone.js"></script>
+    <script src="js/invoice5.js"></script>
+    
+    
+    <!-- Vendor JS Files -->
+  <script src="assets/dist/js/bootstrap.bundle.js"></script>
+  
+
+ 
+    
+    
+</body>
+</html>

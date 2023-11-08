@@ -1,0 +1,32 @@
+{% extends "invoice_base.html" %}
+{% block title %}IOL Invoice{% endblock %}
+{% block content %}
+  
+
+
+  <!-- Page Content -->
+  <div class="container" style="margin-top: 60px; margin-bottom: 100px;">
+
+ <main role="main" class="container">
+
+  <div class="starter-template">
+    <h1>IOL Invoice</h1>
+    <form method="POST" action="/invoicebyein">
+    <div class="form-group  col-md-6">
+    <label for="invoiceein">Search Invoices by EIN</label>
+    <input type="text" class="form-control" id="invoiceein" name="invoice_ein" value="" placeholder="Enter Employer Identification Number"/>
+    <button class="btn btn-primary btn-lg btn-block" type="submit" style="margin-top: 20px;">Submit</button>
+</form>
+    </div> 
+   
+   
+
+   
+  </div>
+
+</main><!-- /.container -->
+
+
+</div>
+<script src="js/jquery-3.2.1.min.js"></script>
+{% endblock %}
