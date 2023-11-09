@@ -306,8 +306,9 @@ def upload():
             #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
             result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
            
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
+            #name_url=result.replace("https:","")
+            #name_url_final=name_url.replace("?dl=0","?raw=1")
+            name_url_final=result.replace("?dl=0", "?dl=1")
             
             os.chdir(r"..")
             
