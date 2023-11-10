@@ -854,7 +854,7 @@ def invoice():
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open("uploads/" + "email" + name + ".html","w")
+            f=open("/uploads/" + "email" + name + ".html","w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
