@@ -854,7 +854,7 @@ def invoice():
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open("uploads/email" + name + ".html","w")
+            f=open("uploads/" + "email" + name + ".html","w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -958,7 +958,7 @@ def invoice():
             print(file_from)
             
             
-            email_url_final = "https://iol-accountant.onrender.com" + "/" + "uploads/email" + name + ".html"
+            email_url_final = "https://iol-accountant.onrender.com" + "/" + "uploads/" + "email" + name + ".html"
             print(email_url_final)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
