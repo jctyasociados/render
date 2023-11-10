@@ -24,7 +24,7 @@ from pyqrcode import QRCode
 from babel.numbers import format_currency 
 import requests
 import math
-
+import pypng
 
 app = Flask(__name__,
             static_url_path='', 
