@@ -58,7 +58,7 @@ if not os.path.isdir(UPLOAD_FOLDER):
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER'''
 
-app.config['UPLOAD_FOLDER'] = "/uploads"
+app.config['UPLOAD_FOLDER'] = "./uploads"
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
