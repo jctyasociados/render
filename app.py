@@ -958,7 +958,7 @@ def invoice():
             print(file_from)
             
             
-            email_url_final = "https://iol-accountant.onrender.com" + "/email" + name + ".html"
+            email_url_final = "https://iol-accountant.onrender.com" + "/" + "uploads/email" + name + ".html"
             print(email_url_final)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
@@ -979,7 +979,6 @@ def invoice():
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
             } \
-           @frame footer_frame {           /* Another static Frame */ \
             -pdf-frame-content: footer_content; \
             left: 50pt; width: 512pt; top: 780pt; height: 20pt; \
             } \
