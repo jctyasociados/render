@@ -1293,7 +1293,7 @@ def invoice():
             TEMPLATE_FILE = app.config['UPLOAD_FOLDER'] + "/" + name + ".html"
             
             # Methods section ....
-            '''def html_to_pdf(content, output):
+            def html_to_pdf(content, output):
             
                 # Open file to write
                 result_file = open(output, "w+b") # w+b to write in binary mode.
@@ -1368,7 +1368,7 @@ def invoice():
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
             db.session.add(new_template)
-            db.session.commit()'''           
+            db.session.commit()        
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
