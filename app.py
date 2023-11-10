@@ -1,4 +1,3 @@
-#Project for CS50
 from flask import Flask, request, redirect, url_for, render_template, jsonify, flash, session, json
 from flask_sqlalchemy import SQLAlchemy
 from flask_modus import Modus
