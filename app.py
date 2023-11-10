@@ -275,7 +275,7 @@ def upload():
                        
                        
             os.chdir(r"..")
-            name_url_final = "https://iol-accountant.onrender.com" + "/static/uploads" + finalimagename
+            name_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + finalimagename
 
             user_hashed=current_user.user_id_hash
             
@@ -958,7 +958,7 @@ def invoice():
             print(file_from)
             
             
-            email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads" + "uploads/" + "email" + name + ".html"
+            email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             print(email_url_final)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
