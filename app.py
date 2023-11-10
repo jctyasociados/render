@@ -68,7 +68,7 @@ from models import User, InvoiceData, InvoiceItems, ImageData, InvoiceValues, Pr
 
 class InvoiceDataSchema(ma.SQLAlchemyAutoSchema):
         class Meta:
-        	model = InvoiceData
+            model = InvoiceData
             load_instance = True
 
 # setup the login manager
