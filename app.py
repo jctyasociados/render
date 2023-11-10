@@ -49,16 +49,15 @@ def usdollar(value):
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-'''path = os.getcwd()
+#path = os.getcwd()
+path = os.path.dirname(__file__)
 # file Upload
 UPLOAD_FOLDER = os.path.join(path, 'uploads')
 
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER'''
-
-app.config['UPLOAD_FOLDER'] = "./uploads"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
