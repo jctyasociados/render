@@ -76,18 +76,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-class TransferData:
-    
-    def __init__(self, access_token):
-        self.access_token = access_token
-        
-    def upload_file(self, file_from, file_to):
-        
-        dbx = dropbox.Dropbox(self.access_token)
-        
-        with open(file_from, 'rb') as f:
-            dbx.files_upload(f.read(), file_to)
-           
+         
 ####  setup routes  ####
 @app.route('/')
 def index():
@@ -283,33 +272,11 @@ def upload():
             os.chdir(upload_path)
             os.remove(destination)
             
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
-            try:
-                if(dbx.files_delete_v2("/iolcloud/" + found_image_data.image_name)):
-                  transferData.upload_file(file_from, file_to)
-                  #print("Image Deleted")
-            except:
-                transferData.upload_file(file_from, file_to)
-                #print("Image uploaded")
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            
+                       
+                       
             os.chdir(r"..")
-            
+            name_url_final = "https://iol-accountant.onrender.com" + "/" + finalimagename
+
             user_hashed=current_user.user_id_hash
             
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).all()
@@ -344,12 +311,6 @@ def send_html():
     name=name.replace("/","$$$")
     name=name.replace(".","$$$")
     
-    access_token = app.config['DROPBOX_ACCESS_TOKEN']
-
-    dbx = dropbox.Dropbox(access_token)            
-     
-    metadata = dbx.files_download_to_file(app.config['UPLOAD_FOLDER'] + "/email" + name + ".html", "/iolcloud/email" + name + ".html")
-    
     subject = "Invoice from" + " " + found_profile_data.businessname
     file = open(app.config['UPLOAD_FOLDER'] + "/email" + name + ".html", "r")
     body = file.read()
@@ -375,12 +336,6 @@ def send_html():
     name=user_hashed
     name=name.replace("/","$$$")
     name=name.replace(".","$$$")
-    
-    access_token = app.config['DROPBOX_ACCESS_TOKEN']
-
-    dbx = dropbox.Dropbox(access_token)            
-     
-    metadata = dbx.files_download_to_file(app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf", "/iolcloud/" + name + ".pdf")
     
     filename_app = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
     
@@ -449,8 +404,9 @@ def login():
             return render_template('login.html', sitekey=sitekey)
         
         if registered_user.username == username and bcrypt.check_password_hash(registered_user.password, password) == False:
-    	    flash("Invalid Password", "warning")
-    	    return render_template('login.html', sitekey=sitekey)
+            
+            flash("Invalid Password", "warning")
+            return render_template('login.html', sitekey=sitekey)
         
         if not is_human(captcha_response):
             # Log invalid attempts
@@ -860,35 +816,11 @@ def invoice():
                 img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
-                
-            upload_path = "uploads"
-            os.chdir(upload_path)
-            os.remove(destination)
+               
             
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
+            name_url_final="https://iol-accountant.onrender.com" + "/uploads" + "/" + finalimagename
             
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
-            try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+            print(name_url_final)  
 
 
         
@@ -1014,9 +946,6 @@ def invoice():
             f.write("</table></td></tr></table>")
             f.close()            
             
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).all()
             for row in found_html_template_data:
                 
@@ -1024,26 +953,15 @@ def invoice():
                 db.session.commit()
             
             
-                
-                
-            transferData = TransferData(access_token)   
             file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
-            file_to = "/iolcloud/email" + name + ".html"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
+            
             print(file_from)
-            print(file_to)
             
-            try:
-                dbx.files_delete_v2("/iolcloud/email" + name + ".html")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
-                
-                    
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            email_url_final = "https://iol-accountant.onrender.com" + "/email" + name + ".html"
+            print(email_url_final)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -1333,40 +1251,11 @@ def invoice():
             name=user_hashed
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
+                  
+            pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            print(pdf_final_url)
             
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
-            for row in found_template_data:
-                
-                TemplateData.query.delete()
-                db.session.commit()
-            
-            
-                
-                
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
-            
-            try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
-                
-                    
-            
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
