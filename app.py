@@ -979,6 +979,7 @@ def invoice():
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
             } \
+            @frame footer_frame {           /* Another static Frame */ \
             -pdf-frame-content: footer_content; \
             left: 50pt; width: 512pt; top: 780pt; height: 20pt; \
             } \
