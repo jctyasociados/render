@@ -49,10 +49,10 @@ def usdollar(value):
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-#path = os.getcwd()
-path = os.path.dirname(__file__)
+path = os.getcwd()
+#path = os.path.dirname(__file__)
 # file Upload
-UPLOAD_FOLDER = os.path.join(path, 'uploads')
+UPLOAD_FOLDER = os.path.join(path, 'static/uploads')
 
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
@@ -69,7 +69,7 @@ from models import User, InvoiceData, InvoiceItems, ImageData, InvoiceValues, Pr
 class InvoiceDataSchema(ma.SQLAlchemyAutoSchema):
         class Meta:
         	model = InvoiceData
-        	load_instance = True
+            load_instance = True
 
 # setup the login manager
 login_manager = LoginManager()
@@ -275,7 +275,7 @@ def upload():
                        
                        
             os.chdir(r"..")
-            name_url_final = "https://iol-accountant.onrender.com" + "/" + finalimagename
+            name_url_final = "https://iol-accountant.onrender.com" + "/static/uploads" + finalimagename
 
             user_hashed=current_user.user_id_hash
             
@@ -958,7 +958,7 @@ def invoice():
             print(file_from)
             
             
-            email_url_final = "https://iol-accountant.onrender.com" + "/" + "uploads/" + "email" + name + ".html"
+            email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads" + "uploads/" + "email" + name + ".html"
             print(email_url_final)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
