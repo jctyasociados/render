@@ -819,7 +819,7 @@ def invoice():
                 width, height = new__image.size
                
             
-            name_url_final="https://iol-accountant.onrender.com" + "/static/uploads" + "/" + finalimagename
+            name_url_final="uploads" + "/" + finalimagename
             
             print(name_url_final)  
 
