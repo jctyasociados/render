@@ -49,8 +49,8 @@ def usdollar(value):
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-path = os.getcwd()
-#path = os.path.dirname(__file__)
+#path = os.getcwd()
+path = os.path.dirname(__file__)
 # file Upload
 UPLOAD_FOLDER = os.path.join(path, 'static/uploads')
 
