@@ -276,8 +276,7 @@ def upload():
                        
                        
             os.chdir(r"../..")
-            name_url_final = "https://iol-accountant.onrender.com" + "/uploads" + "/" + finalimagename
-
+            name_url_final = {{url_for('static', filename='uploads/' + finalimagename)}}
             user_hashed=current_user.user_id_hash
             
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).all()
@@ -819,7 +818,7 @@ def invoice():
                 width, height = new__image.size
                
             
-            name_url_final="https://iol-accountant.onrender.com/" + "uploads" + "/" + finalimagename
+            name_url_final={{url_for('static', filename='uploads/' + finalimagename)}}
             
             print(name_url_final)  
 
