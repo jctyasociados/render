@@ -268,14 +268,14 @@ def upload():
                 image.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = image.size
                    
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
                        
                        
-            os.chdir(r"..")
-            name_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + finalimagename
+            os.chdir(r"../..")
+            name_url_final = "https://iol-accountant.onrender.com" + "/static/uploads" + "/" + finalimagename
 
             user_hashed=current_user.user_id_hash
             
@@ -818,7 +818,7 @@ def invoice():
                 width, height = new__image.size
                
             
-            name_url_final="https://iol-accountant.onrender.com" + "/uploads" + "/" + finalimagename
+            name_url_final="https://iol-accountant.onrender.com" + "/static/uploads" + "/" + finalimagename
             
             print(name_url_final)  
 
@@ -1252,7 +1252,7 @@ def invoice():
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
                   
-            pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            pdf_final_url = "https://iol-accountant.onrender.com" + "/static/uploads" + "/" + name + ".pdf"
             print(pdf_final_url)
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -1359,7 +1359,7 @@ def invoiceedit():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
@@ -1931,7 +1931,7 @@ def invoicenumber():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
@@ -2654,7 +2654,7 @@ def invoicenumberbyein():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
@@ -3225,7 +3225,7 @@ def invoicenumberresults():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
@@ -3796,7 +3796,7 @@ def invoicenumberbydate():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "uploads"
+            upload_path = "static/uploads"
             os.chdir(upload_path)
             os.remove(destination)
             
