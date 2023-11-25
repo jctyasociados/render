@@ -816,9 +816,9 @@ def invoice():
                 img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
-               
+                final_url = 'uploads/' + finalimagename
             
-            name_url_final={{url_for('static', filename='uploads/' + finalimagename)}}
+            name_url_final={{url_for('static', filename=final_url)}}
             
             print(name_url_final)  
 
