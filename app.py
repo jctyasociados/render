@@ -844,11 +844,12 @@ def invoice():
             os.remove(destination)
 
             try:
-                if m.find(finalimagename):
-                    m.delete(finalimagename)
-                    Folder = m.find('iol-invoice')
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
                     file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)        
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
                 Folder = m.find('iol-invoice')
                 file = m.upload(finalimagename, Folder[0])
@@ -989,20 +990,33 @@ def invoice():
                 TemplateHTMLData.query.delete()
                 db.session.commit()
             
+            upload_path = "uploads"
+            os.chdir(upload_path)
+            #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
+            file_from = "email" + name + ".html"
+            try:
+                Folder = m.find('iol-invoice')
+                if m.delete(file_from, Folder[0]):
+                    file = m.upload(file_from, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(file_from, Folder[0])
+                file_url = m.get_upload_link(file)
             
-            file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             
-            print(file_from)
-            
-            
-            email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
-            print(email_url_final)
+            #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
+            #print(email_url_final)
+
+            email_url_final = file_url
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
-                        
+            os.chdir(r"..")            
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
@@ -1285,13 +1299,31 @@ def invoice():
     
             from_template(TEMPLATE_FILE, OUTPUT_FILENAME)
             
+            upload_path = "uploads"
+            os.chdir(upload_path)
+
             name=user_hashed
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
+            full_name = name + ".pdf"
+
+            try:
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
                   
-            pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
-            print(pdf_final_url)
-            
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
@@ -1396,34 +1428,26 @@ def invoiceedit():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "static/uploads"
+            upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
+            
+            #print(name_url_final)  
 
 
         
@@ -1576,9 +1600,9 @@ def invoiceedit():
                     
             
             result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            print(pdf_final_url)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -1869,39 +1893,42 @@ def invoiceedit():
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
             
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
             for row in found_template_data:
                 
                 TemplateData.query.delete()
                 db.session.commit()
             
-            
-                
-                
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
-            
+            upload_path = "uploads"
+            os-chdir(upload_path)
+
+            name=user_hashed
+            name=name.replace("/","$$$")
+            name=name.replace(".","$$$") 
+            full_name = name + ".pdf"
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
                 
-                    
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
+                
+                
+           
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
@@ -1968,34 +1995,26 @@ def invoicenumber():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "static/uploads"
+            upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
+            
+            #print(name_url_final)  
 
 
         
@@ -2148,9 +2167,9 @@ def invoicenumber():
                     
             
             result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            print(pdf_final_url)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -2440,40 +2459,30 @@ def invoicenumber():
             name=user_hashed
             name=name.replace("/","$$$") 
             name=name.replace(".","$$$")
-            
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
-            for row in found_template_data:
-                
-                TemplateData.query.delete()
-                db.session.commit()
-            
-            
-                
-                
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
-            
+            upload_path = "uploads"
+            os.chdir(upload_path)
+
+            full_name = name + ".pdf"
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
                 
-                    
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
@@ -2691,34 +2700,26 @@ def invoicenumberbyein():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "static/uploads"
+            upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
+            
+            #print(name_url_final)  
 
 
         
@@ -2871,9 +2872,9 @@ def invoicenumberbyein():
                     
             
             result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            print(pdf_final_url)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -3160,43 +3161,34 @@ def invoicenumberbyein():
     
             from_template(TEMPLATE_FILE, OUTPUT_FILENAME)
             
+            
+            upload_path = "uploads"
+            os.chdir(upload_path)
+
             name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
-            
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
-            for row in found_template_data:
-                
-                TemplateData.query.delete()
-                db.session.commit()
-            
-            
-                
-                
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
-            
+            name=name.replace("/","$$$")
+            name=name.replace(".","$$$") 
+            full_name = name + ".pdf"
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
                 
-                    
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
@@ -3262,34 +3254,26 @@ def invoicenumberresults():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "static/uploads"
+            upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
+            
+            #print(name_url_final)  
 
 
         
@@ -3442,9 +3426,9 @@ def invoicenumberresults():
                     
             
             result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            print(pdf_final_url)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -3734,40 +3718,30 @@ def invoicenumberresults():
             name=user_hashed
             name=name.replace("/","$$$") 
             name=name.replace(".","$$$")
-            
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
-            for row in found_template_data:
-                
-                TemplateData.query.delete()
-                db.session.commit()
-            
-            
-                
-                
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
-            
+            upload_path = "uploads"
+            os.chdir(upload_path)
+
+            full_name = name + ".pdf"
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
                 
-                    
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
@@ -3833,34 +3807,26 @@ def invoicenumberbydate():
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
                 
-            upload_path = "static/uploads"
+            upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            transferData = TransferData(access_token)
-            
-            file_from = finalimagename
-            file_to = '/iolcloud/' + finalimagename # The full path to upload the file to, including the file name
-            dbx = dropbox.Dropbox(access_token)
-            
-              # API v2
-            #transferData.upload_file(file_from, file_to)
-            
+
             try:
-                dbx.files_delete_v2("/iolcloud/" + finalimagename)
-                transferData.upload_file(file_from, file_to)
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
-                transferData.upload_file(file_from, file_to)
-    
-            #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
-           
-            name_url=result.replace("https:","")
-            name_url_final=name_url.replace("?dl=0","?raw=1")
-            print(result)
-            print(name_url)  
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
+            
+            #print(name_url_final)  
 
 
         
@@ -4013,9 +3979,9 @@ def invoicenumberbydate():
                     
             
             result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
+            print(pdf_final_url)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
@@ -4305,13 +4271,29 @@ def invoicenumberbydate():
             name=user_hashed
             name=name.replace("/","$$$") 
             name=name.replace(".","$$$")
+            upload_path = "uploads"
+            os.chdir(upload_path)
+
+            full_name = name + ".pdf"
+
+            try:
+                Folder = m.find('iol-invoice')
+                if m.delete(full_name , Folder[0]):
+                    file = m.upload(full_name, Folder[0])
+                    file_url = m.get_upload_link(file)
+                
+                        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(full_name, Folder[0])
+                file_url = m.get_upload_link(file)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
+
+            pdf_final_url = file_url
+            os.chdir(r"..")
             
-            #INPUT_FILENAME = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
-            #OUTPUT_TEMPLATE = '/iolcloud/' + name + ".pdf"
-            
-            access_token = app.config['DROPBOX_ACCESS_TOKEN']
-            
-            dbx = dropbox.Dropbox(access_token)
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
             for row in found_template_data:
                 
@@ -4321,24 +4303,9 @@ def invoicenumberbydate():
             
                 
                 
-            transferData = TransferData(access_token)   
-            file_from = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf" # This is name of the file to be uploaded
-            file_to = "/iolcloud/" + name + ".pdf"  # This is the full path to upload the file to, including name that you wish the file to be called once uploaded.
-            print(file_from)
-            print(file_to)
             
-            try:
-                dbx.files_delete_v2("/iolcloud/" + name + ".pdf")
-                transferData.upload_file(file_from, file_to)
-            except:
-                transferData.upload_file(file_from, file_to)
-                
-                    
             
-            result = dbx.files_get_temporary_link(file_to)
-            print(result.link)
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, result.link)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()           
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
