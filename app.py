@@ -284,17 +284,18 @@ def upload():
             os.remove(destination)
             
             try:
-                if m.find(finalimagename):
-                    m.delete(finalimagename)
-                    Folder = m.find('iol-invoice')
+                Folder = m.find('iol-invoice')
+                if m.delete(finalimagename, Folder[0]):
                     file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)    
-                    return file_url    
+                    file_url = m.get_upload_link(file)
+                
+                        
             except:
                 Folder = m.find('iol-invoice')
                 file = m.upload(finalimagename, Folder[0])
                 file_url = m.get_upload_link(file)
-                return file_url
+                
+                
                        
             os.chdir(r"../..")
             name_url_final = file_url
