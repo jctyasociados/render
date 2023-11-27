@@ -77,6 +77,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+### MEga Data ###
+
+from mega import Mega
+
+mega = Mega()
+
+email = 'jctyasociados@gmail.com'
+password = '1to1anyherzT'
+
+m = mega.login(email, password)
          
 ####  setup routes  ####
 @app.route('/')
@@ -273,10 +283,21 @@ def upload():
             os.chdir(upload_path)
             os.remove(destination)
             
-                       
+            try:
+                if m.find(finalimagename):
+                    m.delete(finalimagename)
+                    Folder = m.find('iol-invoice')
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)    
+                    return file_url    
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+                return file_url
                        
             os.chdir(r"../..")
-            name_url_final = {{url_for('static', filename='uploads/' + finalimagename)}}
+            name_url_final = file_url
             user_hashed=current_user.user_id_hash
             
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).all()
@@ -816,11 +837,26 @@ def invoice():
                 img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = new__image.size
-                final_url = 'uploads/' + finalimagename
+
+            upload_path = "uploads"
+            os.chdir(upload_path)
+            os.remove(destination)
+
+            try:
+                if m.find(finalimagename):
+                    m.delete(finalimagename)
+                    Folder = m.find('iol-invoice')
+                    file = m.upload(finalimagename, Folder[0])
+                    file_url = m.get_upload_link(file)        
+            except:
+                Folder = m.find('iol-invoice')
+                file = m.upload(finalimagename, Folder[0])
+                file_url = m.get_upload_link(file)
+
+
+            name_url_final = file_url
             
-            name_url_final={{url_for('static', filename=final_url)}}
-            
-            print(name_url_final)  
+            #print(name_url_final)  
 
 
         
