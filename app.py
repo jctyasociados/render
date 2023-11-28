@@ -49,8 +49,8 @@ def usdollar(value):
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-#path = os.getcwd()
-path = os.path.dirname(__file__)
+path = os.getcwd()
+#path = os.path.dirname(__file__)
 #basedir = os.path.abspath(os.path.dirname(__file__))
 # file Upload
 UPLOAD_FOLDER = os.path.join(path, 'uploads')
@@ -83,8 +83,8 @@ from mega import Mega
 
 mega = Mega()
 
-email = 'jctyasociados@gmail.com'
-password = '1to1anyherzT'
+email = app.config['EMAIL_MEGA']
+password = app.config['PASSWORD_MEGA']
 
 m = mega.login(email, password)
          
@@ -297,7 +297,7 @@ def upload():
                 
                 
                        
-            os.chdir(r"../..")
+            os.chdir(r"..")
             name_url_final = file_url
             user_hashed=current_user.user_id_hash
             
@@ -842,23 +842,22 @@ def invoice():
             upload_path = "uploads"
             os.chdir(upload_path)
             os.remove(destination)
+            finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
 
             try:
                 Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
+                if (m.delete(finalimagename, Folder[0])):
+                    file = m.upload(finalimagename_path, Folder[0])
+                    file_url = m.get_upload_link(file)                       
             except:
                 Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
+                file = m.upload(finalimagename_path, Folder[0])
                 file_url = m.get_upload_link(file)
 
 
             name_url_final = file_url
             
-            #print(name_url_final)  
+            print(name_url_final)  
 
 
         
