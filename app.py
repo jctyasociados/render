@@ -303,8 +303,8 @@ def upload():
                 #print("Image uploaded")
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -880,8 +880,8 @@ def invoice():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -1486,8 +1486,8 @@ def invoiceedit():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -2055,8 +2055,8 @@ def invoicenumber():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -2775,8 +2775,8 @@ def invoicenumberbyein():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -3343,8 +3343,8 @@ def invoicenumberresults():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
@@ -3911,8 +3911,8 @@ def invoicenumberbydate():
                 transferData.upload_file(file_from, file_to)
     
             #result = dbx.files_get_temporary_link(file_to)
-            #dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None)
-            result = dbx.sharing_create_shared_link(path = file_to, short_url=False, pending_upload=None).url
+            #dbx.files_get_temporary_link(file_to)
+            result = dbx.files_get_temporary_link(file_to)
            
             name_url=result.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
