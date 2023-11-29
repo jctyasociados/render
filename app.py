@@ -289,13 +289,13 @@ def upload():
                 if (m.find(finalimagename)):
                     m.delete(finalimagename)
                     file = m.upload(finalimagename)
-                    file_url = m.get_upload_link(file)
+                    global file_url = m.get_upload_link(file)
                 
                         
             except:
                 #Folder = m.find('iol-invoice')
                 file = m.upload(finalimagename)
-                file_url = m.get_upload_link(file)
+                global file_url = m.get_upload_link(file)
                 
                 
                        
