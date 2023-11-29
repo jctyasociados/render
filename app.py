@@ -283,12 +283,13 @@ def upload():
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             os.remove(destination)
+
             
-            global file_url
 
             try:
                 #Folder = m.find('iol-invoice')
                 if (m.find(finalimagename)):
+                    global file_url
                     m.delete(finalimagename)
                     file = m.upload(finalimagename)
                     file_url = m.get_upload_link(file)
@@ -296,6 +297,7 @@ def upload():
                         
             except:
                 #Folder = m.find('iol-invoice')
+                global file_url
                 file = m.upload(finalimagename)
                 file_url = m.get_upload_link(file)
                 
