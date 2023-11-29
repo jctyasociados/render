@@ -305,8 +305,8 @@ def upload():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             
             os.chdir(r"..")
@@ -882,8 +882,8 @@ def invoice():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
@@ -1488,8 +1488,8 @@ def invoiceedit():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
@@ -2057,8 +2057,8 @@ def invoicenumber():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
@@ -2777,8 +2777,8 @@ def invoicenumberbyein():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
@@ -3345,8 +3345,8 @@ def invoicenumberresults():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
@@ -3913,8 +3913,8 @@ def invoicenumberbydate():
             #result = dbx.files_get_temporary_link(file_to)
             #dbx.files_get_temporary_link(file_to)
             result = dbx.files_get_temporary_link(file_to)
-           
-            name_url=result.replace("https:","")
+            name_url = result.link
+            name_url=name_url.replace("https:","")
             name_url_final=name_url.replace("?dl=0","?raw=1")
             print(result)
             print(name_url)  
