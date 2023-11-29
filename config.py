@@ -25,7 +25,9 @@ class Config(object):
     MAIL_DEFAULT_SENDER = os.getenv("APP_MAIL_USERNAME_SENDER")
     RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_KEY")
     SECRET_SITE_KEY = os.getenv("SECRET_KEY_RECAPTCHA")
-    DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
+    #DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
+    EMAIL_MEGA = os.getenv("MEGA_USER")
+    PASSWORD_MEGA=  os.getenv("MEGA_PASSWORD")
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
