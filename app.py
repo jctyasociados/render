@@ -299,7 +299,7 @@ def upload():
                        
             os.chdir(r"..")
             
-            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
+            name_url_final = "{{ url_for(send_uploaded_file, filename=" + finalimagename + ") }}"
             #"/uploads/" + finalimagename
             user_hashed=current_user.user_id_hash
             
