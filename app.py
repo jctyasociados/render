@@ -846,7 +846,7 @@ def invoice():
             os.remove(destination)
             finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
 
-            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
+            name_url_final = "{{ url_for(send_uploaded_file, filename=" + finalimagename + ") }}"
             
             print(name_url_final)  
 
