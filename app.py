@@ -84,10 +84,10 @@ login_manager.login_view = 'login'
 
 mega = Mega()
 
-email = app.config['EMAIL_MEGA']
+email_mega = app.config['EMAIL_MEGA']
 password = app.config['PASSWORD_MEGA']
 
-m = mega.login(email, password)
+m = mega.login(email_mega, password)
          
 ####  setup routes  ####
 @app.route('/')
@@ -234,6 +234,12 @@ def appcontact():
     
     return render_template('appcontact.html', sitekey=sitekey, user=current_user)
     
+@app.route('/uploads/<filename>')
+def send_uploaded_file(filename=''):
+    from flask import send_from_directory
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
@@ -286,27 +292,15 @@ def upload():
 
             
 
-            try:
-                global file_url
-                #Folder = m.find('iol-invoice')
-                if (m.find(finalimagename)):
-                    m.delete(finalimagename)
-                    file = m.upload(finalimagename)
-                    file_url = m.get_upload_link(file)
-                              
-                        
-            except:
-                global file_url
-                #Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename)
-                file_url = m.get_upload_link(file)
-                
+            
+                           
                 
                 
                        
             os.chdir(r"..")
-            print(file_url)
-            name_url_final = file_url
+            
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
+            #"/uploads/" + finalimagename
             user_hashed=current_user.user_id_hash
             
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).all()
@@ -852,18 +846,7 @@ def invoice():
             os.remove(destination)
             finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
 
-            try:
-                Folder = m.find('iol-invoice')
-                if (m.delete(finalimagename, Folder[0])):
-                    file = m.upload(finalimagename_path, Folder[0])
-                    file_url = m.get_upload_link(file)                       
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename_path, Folder[0])
-                file_url = m.get_upload_link(file)
-
-
-            name_url_final = file_url
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
             
             print(name_url_final)  
 
@@ -906,7 +889,7 @@ def invoice():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -978,7 +961,7 @@ def invoice():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -1004,23 +987,13 @@ def invoice():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(file_from, Folder[0]):
-                    file = m.upload(file_from, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(file_from, Folder[0])
-                file_url = m.get_upload_link(file)
+            
             
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
 
-            email_url_final = file_url
+            email_url_final = "{{ url_for(send_uploaded_file, filename=file_from) }}"
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
             db.session.add(new_template)
@@ -1051,7 +1024,7 @@ def invoice():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -1138,7 +1111,7 @@ def invoice():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -1220,7 +1193,7 @@ def invoice():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -1246,7 +1219,7 @@ def invoice():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -1317,22 +1290,11 @@ def invoice():
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                            
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
@@ -1442,20 +1404,7 @@ def invoiceedit():
             os.chdir(upload_path)
             os.remove(destination)
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
-                file_url = m.get_upload_link(file)
-
-
-            name_url_final = file_url
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
             
             #print(name_url_final)  
 
@@ -1498,7 +1447,7 @@ def invoiceedit():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -1570,7 +1519,7 @@ def invoiceedit():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -1596,23 +1545,12 @@ def invoiceedit():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(file_from, Folder[0]):
-                    file = m.upload(file_from, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
                         
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(file_from, Folder[0])
-                file_url = m.get_upload_link(file)
-            
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
 
-            pdf_final_url = file_url    
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=file_from) }}"   
                 
             
             print(pdf_final_url)
@@ -1646,7 +1584,7 @@ def invoiceedit():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -1733,7 +1671,7 @@ def invoiceedit():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -1815,7 +1753,7 @@ def invoiceedit():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -1841,7 +1779,7 @@ def invoiceedit():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -1918,22 +1856,12 @@ def invoiceedit():
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
+            
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
                 
                 
@@ -2010,20 +1938,9 @@ def invoicenumber():
             os.chdir(upload_path)
             os.remove(destination)
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
-                file_url = m.get_upload_link(file)
+            
 
-
-            name_url_final = file_url
+            name_url_final = "/uoloads/" + finalimagename
             
             #print(name_url_final)  
 
@@ -2066,7 +1983,7 @@ def invoicenumber():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -2138,7 +2055,7 @@ def invoicenumber():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -2166,22 +2083,11 @@ def invoicenumber():
 
             full_name = "email" + name + ".html"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                             
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
             
             
@@ -2216,7 +2122,7 @@ def invoicenumber():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -2303,7 +2209,7 @@ def invoicenumber():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -2385,7 +2291,7 @@ def invoicenumber():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -2411,7 +2317,7 @@ def invoicenumber():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -2482,22 +2388,11 @@ def invoicenumber():
 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                             
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "/uoloads/" + full_name
             os.chdir(r"..")
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -2722,20 +2617,8 @@ def invoicenumberbyein():
             os.chdir(upload_path)
             os.remove(destination)
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
-                file_url = m.get_upload_link(file)
-
-
-            name_url_final = file_url
+            
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
             
             #print(name_url_final)  
 
@@ -2778,7 +2661,7 @@ def invoicenumberbyein():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -2850,7 +2733,7 @@ def invoicenumberbyein():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -2880,22 +2763,11 @@ def invoicenumberbyein():
 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                             
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
 
             print(pdf_final_url)
@@ -2929,7 +2801,7 @@ def invoicenumberbyein():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -3016,7 +2888,7 @@ def invoicenumberbyein():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -3098,7 +2970,7 @@ def invoicenumberbyein():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -3124,7 +2996,7 @@ def invoicenumberbyein():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -3196,22 +3068,11 @@ def invoicenumberbyein():
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                              
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -3284,20 +3145,8 @@ def invoicenumberresults():
             os.chdir(upload_path)
             os.remove(destination)
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
-                file_url = m.get_upload_link(file)
-
-
-            name_url_final = file_url
+            
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
             
             #print(name_url_final)  
 
@@ -3340,7 +3189,7 @@ def invoicenumberresults():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -3412,7 +3261,7 @@ def invoicenumberresults():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -3441,23 +3290,12 @@ def invoicenumberresults():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(file_from, Folder[0]):
-                    file = m.upload(file_from, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(file_from, Folder[0])
-                file_url = m.get_upload_link(file)
-            
+                       
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=file_from) }}"
             print(pdf_final_url)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -3489,7 +3327,7 @@ def invoicenumberresults():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -3576,7 +3414,7 @@ def invoicenumberresults():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -3658,7 +3496,7 @@ def invoicenumberresults():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -3684,7 +3522,7 @@ def invoicenumberresults():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -3755,22 +3593,11 @@ def invoicenumberresults():
 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                              
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -3843,20 +3670,8 @@ def invoicenumberbydate():
             os.chdir(upload_path)
             os.remove(destination)
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(finalimagename, Folder[0]):
-                    file = m.upload(finalimagename, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(finalimagename, Folder[0])
-                file_url = m.get_upload_link(file)
-
-
-            name_url_final = file_url
+            
+            name_url_final = "{{ url_for(send_uploaded_file, filename=finalimagename) }}"
             
             #print(name_url_final)  
 
@@ -3899,7 +3714,7 @@ def invoicenumberbydate():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -3971,7 +3786,7 @@ def invoicenumberbydate():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
@@ -4001,23 +3816,12 @@ def invoicenumberbydate():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(file_from, Folder[0]):
-                    file = m.upload(file_from, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(file_from, Folder[0])
-                file_url = m.get_upload_link(file)
-            
+                      
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=file_from) }}"
             print(pdf_final_url)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -4049,7 +3853,7 @@ def invoicenumberbydate():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='https:" + found_image_data.image_url + "' alt='Logo'> \
+            <img src='" + found_image_data.image_url + "' alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -4136,7 +3940,7 @@ def invoicenumberbydate():
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-                 <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
+                 <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
                 list_number = len(list_sum) - 1
                 taxes = float(found_invoice_data.taxes)
@@ -4218,7 +4022,7 @@ def invoicenumberbydate():
                         counter += 1
                     f.write("</table>")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                     f.close()
                     list_number = len(list_sum) - 1
                     taxes = float(found_invoice_data.taxes)
@@ -4244,7 +4048,7 @@ def invoicenumberbydate():
                 f.close()
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
-            <tr><td style='width: 50%'>" + "<img src='https:" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
+            <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
                 f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
@@ -4315,22 +4119,11 @@ def invoicenumberbydate():
 
             full_name = name + ".pdf"
 
-            try:
-                Folder = m.find('iol-invoice')
-                if m.delete(full_name , Folder[0]):
-                    file = m.upload(full_name, Folder[0])
-                    file_url = m.get_upload_link(file)
-                
-                        
-            except:
-                Folder = m.find('iol-invoice')
-                file = m.upload(full_name, Folder[0])
-                file_url = m.get_upload_link(file)
-                  
+                             
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
 
-            pdf_final_url = file_url
+            pdf_final_url = "{{ url_for(send_uploaded_file, filename=full_name) }}"
             os.chdir(r"..")
             
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
