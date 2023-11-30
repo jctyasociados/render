@@ -54,7 +54,7 @@ path = os.getcwd()
 #path = os.path.dirname(__file__)
 #basedir = os.path.abspath(os.path.dirname(__file__))
 # file Upload
-UPLOAD_FOLDER = os.path.join(path, 'uploads')
+UPLOAD_FOLDER = os.path.join(path, 'upload')
 
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
@@ -237,7 +237,7 @@ def appcontact():
 @app.route('/uploads/<filename>')
 def send_uploaded_file(filename=''):
     from flask import send_from_directory
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/upload', methods=['GET', 'POST'])
