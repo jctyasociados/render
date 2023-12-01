@@ -86,7 +86,7 @@ mega = Mega()
 email = app.config['EMAIL_MEGA']
 password = app.config['PASSWORD_MEGA']
 
-m = mega.login(email, password)
+
          
 ####  setup routes  ####
 @app.route('/')
@@ -238,7 +238,7 @@ def appcontact():
 def upload():
     user_hashed=current_user.user_id_hash
     found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).first()
-    
+    m = mega.login(email, password)
     #user_id = current_user.user_id_hash
     if request.method == 'POST':
         # check if the post request has the file part
@@ -279,7 +279,7 @@ def upload():
                 image.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
                 width, height = image.size
                    
-            upload_path = app.config['UPLOAD_FOLDER']]
+            upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             os.remove(destination)
             
@@ -832,36 +832,43 @@ def invoice():
             width, height = image.size
             
             #print(width, height)
-            finalimagename=name+"qrcode.png" 
+            finalimagename_qrcode = name + "qrcode.png" 
+            print(finalimagename_qrcode)
             basewidth = 150
             if width > 150:
                 img = Image.open(os.path.join(app.config['UPLOAD_FOLDER'], destination))
                 wpercent = (basewidth / float(img.size[0]))
                 hsize = int((float(img.size[1]) * float(wpercent)))
                 img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-                img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
-                new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
+                img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
+                new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
                 width, height = new__image.size
-
+                
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             os.remove(destination)
-            finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
-
+            #finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
+            
+            #Folder = m.find('iol-invoice')
+            
             try:
                 #Folder = m.find('iol-invoice')
-                files = m.find(finalimagename)
+                files = m.find(finalimagename_qrcode)
                 if files:
                     m.delete(files[0])
-                    file = m.upload(finalimagename)
+                    file = m.upload(finalimagename_qrcode)
                     file_url = m.get_upload_link(file)
                 else:
                     #Folder = m.find('iol-invoice')
-                    file = m.upload(finalimagename)
+                    file = m.upload(finalimagename_qrcode)
                     file_url = m.get_upload_link(file)
                         
             except:
-                return "Error unknown"
+                return "Error unknown Qrcode"
+                        
+            
+                
+                
 
 
             name_url_final = file_url
