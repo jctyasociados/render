@@ -853,14 +853,14 @@ def invoice():
             
             try:
                 #Folder = m.find('iol-invoice')
-                files = m.find(finalimagename_qrcode)
+                files = m.find(new__image)
                 if files:
                     m.delete(files[0])
-                    file = m.upload(finalimagename_qrcode)
+                    file = m.upload(new__image)
                     file_url = m.get_upload_link(file)
                 else:
                     #Folder = m.find('iol-invoice')
-                    file = m.upload(finalimagename_qrcode)
+                    file = m.upload(new__image)
                     file_url = m.get_upload_link(file)
                         
             except:
