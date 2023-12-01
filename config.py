@@ -27,7 +27,7 @@ class Config(object):
     SECRET_SITE_KEY = os.getenv("SECRET_KEY_RECAPTCHA")
     #DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
     EMAIL_MEGA = os.getenv("MEGA_USER")
-    PASSWORD_MEGA =  os.getenv("MEGA_PASSWORD")
+    PASSWORD_MEGA=  os.getenv("MEGA_PASSWORD")
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
