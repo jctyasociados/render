@@ -28,6 +28,8 @@ class Config(object):
     #DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
     EMAIL_MEGA = os.getenv("MEGA_USER")
     PASSWORD_MEGA=  os.getenv("MEGA_PASSWORD")
+    APPLICATION_KEY_ID = os.getenv("B2_KEY_ID")
+    APPLICATION_KEY = os.getenv("B2_APPLICATION_KEY")
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
