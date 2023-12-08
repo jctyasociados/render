@@ -93,17 +93,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-### Mega Data ###
-
-from mega import Mega
-
-mega = Mega()
-
-email = app.config['EMAIL_MEGA']
-password = app.config['PASSWORD_MEGA']
-
-
-         
+       
 ####  setup routes  ####
 @app.route('/')
 def index():
