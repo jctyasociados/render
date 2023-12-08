@@ -1,4 +1,4 @@
-from flask_app import db, ma
+from app import db, ma
 from datetime import datetime
 
 class User(db.Model):
