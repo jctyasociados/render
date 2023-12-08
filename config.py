@@ -26,8 +26,6 @@ class Config(object):
     RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_KEY")
     SECRET_SITE_KEY = os.getenv("SECRET_KEY_RECAPTCHA")
     #DROPBOX_ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")
-    EMAIL_MEGA = os.getenv("MEGA_USER")
-    PASSWORD_MEGA=  os.getenv("MEGA_PASSWORD")
     B2_KEY_ID = os.getenv("APPLICATION_KEY_ID")
     B2_APPLICATION_KEY = os.getenv("APPLICATION_KEY")
 

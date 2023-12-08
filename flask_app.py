@@ -832,7 +832,7 @@ def invoice():
     list_sum = []
     formated_float = 0.00
     counter = 0
-    m=mega.login(email, password)
+    
     
     
     
