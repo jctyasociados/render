@@ -47,6 +47,8 @@ toolbar = DebugToolbarExtension(app)
 
 from token2 import generate_confirmation_token, confirm_token
 
+# Backblaze data
+
 info = b2.InMemoryAccountInfo()
 b2_api = b2.B2Api(info)
 
@@ -54,6 +56,8 @@ application_key_id = app.config['B2_KEY_ID']
 application_key = app.config['B2_APPLICATION_KEY']
 
 b2_api.authorize_account("production", application_key_id, application_key)
+
+
 
 bucket_name = "iol-accountant"
 endpoint_url = "s3.us-west-000.backblazeb2.com"
