@@ -1759,25 +1759,38 @@ def invoiceedit():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            '''try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(file_from)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
-                        
+            
+            file_name = file_from
+
+            try:
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"Email": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"'''
+                local_file = Path(file_name).resolve()
+                metadata = {"Email": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
             
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
-            file_url = "http://localhost:5000" + "/upload_file/" + file_from
+            #file_url = "http://localhost:5000" + "/upload_file/" + file_from
             pdf_final_url = file_url    
                 
             
@@ -2083,25 +2096,37 @@ def invoiceedit():
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
-            '''m=mega.login(email, password)
+            
+            file_name = full_name
+            
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    #file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    #file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                print("Error unknown pdf created")'''
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
-            pdf_final_url = "http://localhost:5000" + "/upload_file/" + full_name
+            #pdf_final_url = "http://localhost:5000" + "/upload_file/" + full_name
             pdf_final_url = file_url
             os.chdir(r"..")
                 
