@@ -898,29 +898,8 @@ def invoice():
             os.remove(destination)
             #finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
             
-            #Folder = m.find('iol-invoice')
-            '''m=mega.login(email, password)
-            try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(finalimagename_qrcode)
-                if files:
-                    m.delete(files[0])                                                    
-                        
-            except Exception as err:
-                print(f"Unexpected {err=}, {type(err)=}")
-            except:
-                print("Unkown Error QRcode")
-                        
             
-                
-                
-            file = m.upload(finalimagename_qrcode)
-            file_url = m.get_upload_link(file)
-
-            name_url_final = file_url
             
-            print("QRcode URL:", name_url_final)'''
-
             file_name = finalimagename_qrcode
 
             try:
@@ -1090,21 +1069,7 @@ def invoice():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            '''try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(file_from)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
                         
-            except:
-                return "Error unknown"'''
-            
             file_name = file_from
             
             try:
@@ -1435,21 +1400,7 @@ def invoice():
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
-            '''try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
-            except:
-                return "Error unknown PDF"'''
-
+            
             file_name = full_name
             
             try:
@@ -2381,20 +2332,32 @@ def invoicenumber():
 
             full_name = "email" + name + ".html"
 
+            file_name = full_name
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -2700,20 +2663,32 @@ def invoicenumber():
 
             full_name = name + ".pdf"
 
+            file_name = full_name
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -3122,20 +3097,32 @@ def invoicenumberbyein():
 
             full_name = name + ".pdf"
 
+            file_name = full_name
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -3441,20 +3428,32 @@ def invoicenumberbyein():
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
+            file_name = full_name
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -3710,20 +3709,32 @@ def invoicenumberresults():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
+            file_name = file_from
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(file_from)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(file_from)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
             
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
@@ -4027,20 +4038,32 @@ def invoicenumberresults():
 
             full_name = name + ".pdf"
 
+            file_name = full_name
+
             try:
-                #Folder = m.find('iol-invoice')
-                files = m.find(full_name)
-                if files:
-                    m.delete(files[0])
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                else:
-                    #Folder = m.find('iol-invoice')
-                    file = m.upload(full_name)
-                    file_url = m.get_upload_link(file)
-                        
+                for version in bucket.list_file_versions(file_name):
+                    bucket.delete_file_version(version.id_, version.file_name)
+
+                local_file = Path(file_name).resolve()
+                metadata = {"QRcode": "Business"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
             except:
-                return "Error unknown"
+                local_file = Path(file_name).resolve()
+                metadata = {"logo": "iol-invoice"}
+
+                uploaded_file = bucket.upload_local_file(
+                local_file=local_file,
+                file_name=file_name,
+                file_infos=metadata,
+                )
+
+            
+            file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
