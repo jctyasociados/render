@@ -1417,7 +1417,7 @@ def invoice():
                 )
             except:
                 local_file = Path(file_name).resolve()
-                metadata = {"logo": "iol-invoice"}
+                metadata = {"PDF Invoice": "iol-invoice"}
 
                 uploaded_file = bucket.upload_local_file(
                 local_file=local_file,
