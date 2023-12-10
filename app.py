@@ -11,7 +11,6 @@ from werkzeug.utils import secure_filename
 import PIL
 from PIL import Image
 from datetime import date
-import dropbox
 from xhtml2pdf import pisa
 import datetime
 from flask_debugtoolbar import DebugToolbarExtension
