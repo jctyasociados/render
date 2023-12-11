@@ -849,7 +849,7 @@ def invoice():
             db.session.commit()
             
             for desc, price, quant, amount in zip(request.form.getlist('item_desc[]'), request.form.getlist('item_price[]'), request.form.getlist('item_quant[]'), request.form.getlist('amount[]')):
-                new_item = InvoiceItems(user_hashed, request.form['invoice_number'], desc, price, quant, amount)
+                new_item = InvoiceItems(user_hashed, request.form['invoice_number'], desc, price, quant ,amount)
                 db.session.add(new_item)
                 db.session.commit()
             new_invoice_values = InvoiceValues(user_hashed, request.form['invoice_number'], request.form['subtotal'], request.form['totaltax'], request.form['grandtotal'])
@@ -858,7 +858,7 @@ def invoice():
             #return 'Invoice added to database
             found_user_data = db.session.query(User).filter_by(user_id_hash=(user_hashed)).all()
             found_invoice_data = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).first()
-            found_invoice_items = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).all()
+            found_invoice_items = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).all()
             found_invoice_values = db.session.query(InvoiceValues).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).first() 
             found_profile_data = db.session.query(ProfileData).filter_by(user_id=(user_hashed)).first() 
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).first() 
@@ -1200,7 +1200,7 @@ def invoice():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in query.items:
+            for item in reversed(query.items):
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += float(item.amount)
                 
@@ -1294,7 +1294,7 @@ def invoice():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in query.items:
+                    for item in reversed(query.items):
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
