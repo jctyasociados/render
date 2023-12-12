@@ -1,2 +1,2 @@
-# iol-invoice-adaptable
-CS50 Final Project
+# iol-accountant
+CS50x Final Project
