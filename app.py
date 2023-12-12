@@ -957,7 +957,7 @@ def invoice():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$")
@@ -1203,8 +1203,8 @@ def invoice():
             f.close()
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-            query_items = reversed(query.items)
-            for item in query_items:
+            
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += float(item.amount)
                 
@@ -1246,7 +1246,7 @@ def invoice():
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
-                    query = query_items.next(error_out=False)
+                    query = query.next(error_out=False)
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
@@ -1600,7 +1600,7 @@ def invoiceedit():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$")
@@ -1846,7 +1846,7 @@ def invoiceedit():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in reversed(query.items):
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += item.amount
                 
@@ -1940,7 +1940,7 @@ def invoiceedit():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in reversed(query.items):
+                    for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
@@ -2220,7 +2220,7 @@ def invoicenumber():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$")
@@ -2467,7 +2467,7 @@ def invoicenumber():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in reversed(query.items):
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += item.amount
                 
@@ -2561,7 +2561,7 @@ def invoicenumber():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in reversed(query.items):
+                    for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
@@ -2758,7 +2758,7 @@ def invoicebyein():
         invoice_ein = session['invoice_ein']
         #print(invoice_ein)
     
-    found_ein = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).paginate(page=page, per_page=POST_PER_PAGE)
+    found_ein = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
     rows = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).count();
     if rows > 0:
         next_url = url_for('invoicebyein', page=found_ein.next_num) \
@@ -2983,7 +2983,7 @@ def invoicenumberbyein():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$") 
@@ -3231,7 +3231,7 @@ def invoicenumberbyein():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in reversed(query.items):
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += item.amount
                 
@@ -3325,7 +3325,7 @@ def invoicenumberbyein():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in reversed(query.items):
+                    for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
@@ -3596,7 +3596,7 @@ def invoicenumberresults():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$") 
@@ -3842,7 +3842,7 @@ def invoicenumberresults():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in reversed(query.items):
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += item.amount
                 
@@ -3936,7 +3936,7 @@ def invoicenumberresults():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in reversed(query.items):
+                    for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
@@ -4206,7 +4206,7 @@ def invoicenumberbydate():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$") 
@@ -4450,7 +4450,7 @@ def invoicenumberbydate():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in reversed(query.items):
+            for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += item.amount
                 
@@ -4544,7 +4544,7 @@ def invoicenumberbydate():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in reversed(query.items):
+                    for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
