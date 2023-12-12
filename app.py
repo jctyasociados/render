@@ -1246,7 +1246,7 @@ def invoice():
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
-                    query = query.next(error_out=False)
+                    query = query_items.next(error_out=False)
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
