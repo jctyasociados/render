@@ -2779,7 +2779,7 @@ def invoicebyein():
         invoice_ein = session['invoice_ein']
         #print(invoice_ein)
     
-    found_ein = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
+    found_ein = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).paginate(page=page, per_page=POST_PER_PAGE)
     rows = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), ein=(invoice_ein)).count();
     if rows > 0:
         next_url = url_for('invoicebyein', page=found_ein.next_num) \
