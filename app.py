@@ -1299,7 +1299,7 @@ def invoice():
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
                     
-                    for item in query_items:           
+                    for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
                         list_sum.append(sum)
