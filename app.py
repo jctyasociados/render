@@ -2786,13 +2786,21 @@ def invoicebyein():
         return render_template('invoice-by-ein.html', found_ein=found_ein, next_url=next_url, prev_url=prev_url, user=current_user)
     else:
         return render_template('no_found_records.html', user=current_user)
-            
-        
+           
+    #return render_template('invoice.html')
+    return 'Done'
+
+@app.route('/invoicebynumber', methods=['GET', 'POST'])
+@login_required
+def invoicebynumber():
+    user_hashed=current_user.user_id_hash
     
-        
-        
-    
-        
+    if request.method == 'POST':
+        found_invoice = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=request.form['invoice_number'])
+        return render_template('invoice-by-number.html', found_invoice=found_invoice, user=current_user)
+    else:
+        return render_template('no_found_records.html', user=current_user)
+           
     #return render_template('invoice.html')
     return 'Done'
     
@@ -2803,6 +2811,14 @@ def searchinvoicebyein():
     
     
     return render_template('invoice-ein.html', user=current_user)
+
+@app.route('/searchinvoicebynumber', methods=['GET', 'POST'])
+@login_required
+def searchinvoicebynumber():
+    user_hashed=current_user.user_id_hash
+    
+    
+    return render_template('invoice-number.html', user=current_user)
     
 @app.route('/invoicebydates', methods=['GET', 'POST'])
 @login_required
