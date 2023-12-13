@@ -3734,13 +3734,14 @@ def invoicenumberresults():
             
                 
             name=user_hashed
-            name=name.replace("/","$$$")
+            name=name.replace("/","$$$") 
             name=name.replace(".","$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
-            #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
-            file_from = "email" + name + ".html"
-            file_name = file_from
+
+            full_name = name + ".pdf"
+
+            file_name = full_name
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -3766,12 +3767,13 @@ def invoicenumberresults():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            
-            
-            #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
-            #print(email_url_final)
+                  
+            #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
+            #print(pdf_final_url)
 
             pdf_final_url = file_url
+            os.chdir(r"..")
+
             print(pdf_final_url)
             
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
@@ -4068,12 +4070,13 @@ def invoicenumberresults():
     
             from_template(TEMPLATE_FILE, OUTPUT_FILENAME)
             
-            name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
+            
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
 
+            name=user_hashed
+            name=name.replace("/","$$$")
+            name=name.replace(".","$$$") 
             full_name = name + ".pdf"
 
             file_name = full_name
