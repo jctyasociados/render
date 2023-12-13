@@ -2812,14 +2812,6 @@ def searchinvoicebyein():
     
     return render_template('invoice-ein.html', user=current_user)
 
-@app.route('/searchinvoicebynumber', methods=['GET', 'POST'])
-@login_required
-def searchinvoicebynumber():
-    user_hashed=current_user.user_id_hash
-    
-    
-    return render_template('invoice-number.html', user=current_user)
-    
 @app.route('/invoicebydates', methods=['GET', 'POST'])
 @login_required
 def invoicebydates():
