@@ -1112,6 +1112,13 @@ def invoice():
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
             os.chdir(r"..")            
             
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)
             
             print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
@@ -1755,6 +1762,13 @@ def invoiceedit():
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
                         
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
@@ -2375,7 +2389,14 @@ def invoicenumber():
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
-                        
+
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)          
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
@@ -3140,7 +3161,14 @@ def invoicenumberbyein():
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
                         
-            
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)
+
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
             <style> \
@@ -3751,7 +3779,14 @@ def invoicenumberresults():
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
                         
-            
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)
+
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
             <style> \
@@ -4359,7 +4394,14 @@ def invoicenumberbydate():
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
                         
-            
+            b2_file_name = found_image_data.image_name
+
+            local_file_path = app.config['UPLOAD_FOLDER']
+
+            downloaded_file = bucket.download_file_by_name(b2_file_name)
+
+            downloaded_file.save_to(local_file_path)
+
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
             <style> \
