@@ -2132,15 +2132,13 @@ def invoicenumber():
     
     try:
         if request.method == 'POST':
-            invoice_number=request.form['invoice_number']
-            
             found_user_data = db.session.query(User).filter_by(user_id_hash=(user_hashed)).all()
-            found_invoice_data = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=invoice_number).first()
-            found_invoice_items = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=invoice_number).order_by(InvoiceItems.id.asc()).all()
-            found_invoice_values = db.session.query(InvoiceValues).filter_by(user_id=(user_hashed), invoice_number=invoice_number).first() 
+            found_invoice_data = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).first()
+            found_invoice_items = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).all()
+            found_invoice_values = db.session.query(InvoiceValues).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).first() 
             found_profile_data = db.session.query(ProfileData).filter_by(user_id=(user_hashed)).first() 
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).first() 
-            found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=invoice_number).count()
+            found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
             name=name.replace("/","$$$")
