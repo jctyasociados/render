@@ -1475,7 +1475,7 @@ def invoice():
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
             
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
             
             for row in found_template_data:
                 
