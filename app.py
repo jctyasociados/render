@@ -312,6 +312,12 @@ def upload():
             os.remove(destination)
 
             file_name = finalimagename
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -903,6 +909,12 @@ def invoice():
             
             file_name = finalimagename_qrcode
 
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -1072,6 +1084,12 @@ def invoice():
             file_from = "email" + name + ".html"
                         
             file_name = file_from
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -1418,6 +1436,12 @@ def invoice():
 
             
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -1567,6 +1591,12 @@ def invoiceedit():
             os.remove(destination)
 
             file_name = finalimagename
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -1736,6 +1766,12 @@ def invoiceedit():
             file_from = "email" + name + ".html"
             
             file_name = file_from
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -2080,6 +2116,12 @@ def invoiceedit():
             full_name = name + ".pdf"
             
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -2190,6 +2232,12 @@ def invoicenumber():
             
             
             file_name = finalimagename_qrcode
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -2361,6 +2409,12 @@ def invoicenumber():
                         
             file_name = file_from
             
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -2706,6 +2760,12 @@ def invoicenumber():
 
             
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -2810,7 +2870,11 @@ def invoicenumberresults():
             os.remove(destination)
             #finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
             
-            
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             file_name = finalimagename_qrcode
 
@@ -2983,6 +3047,12 @@ def invoicenumberresults():
             file_from = "email" + name + ".html"
                         
             file_name = file_from
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -3339,6 +3409,12 @@ def invoicenumberresults():
 
             
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -3575,6 +3651,12 @@ def invoicenumberbyein():
 
             file_name = finalimagename
 
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -3753,6 +3835,12 @@ def invoicenumberbyein():
             full_name = name + ".pdf"
 
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -4092,6 +4180,12 @@ def invoicenumberbyein():
 
             file_name = full_name
 
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -4194,6 +4288,12 @@ def invoicenumberbydate():
             os.remove(destination)
 
             file_name = finalimagename
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -4374,6 +4474,12 @@ def invoicenumberbydate():
             file_from = "email" + name + ".html"
             
             file_name = file_from
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -4706,6 +4812,12 @@ def invoicenumberbydate():
             full_name = name + ".pdf"
 
             file_name = full_name
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
