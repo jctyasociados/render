@@ -1130,7 +1130,7 @@ def invoice():
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
             os.chdir(r"..")            
             
-            '''# bucket
+            # bucket
 
             bucket_name = "iol-accountant"
             endpoint_url = "s3.us-west-000.backblazeb2.com"
@@ -1142,7 +1142,7 @@ def invoice():
 
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
-            downloaded_file.save_to(local_file_path)'''
+            downloaded_file.save_to(local_file_path)
             
             print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
