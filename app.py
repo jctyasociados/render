@@ -1132,17 +1132,17 @@ def invoice():
             
             # bucket
 
-            '''bucket_name = "iol-accountant"
+            bucket_name = "iol-accountant"
             endpoint_url = "s3.us-west-000.backblazeb2.com"
             bucket = b2_api.get_bucket_by_name(bucket_name)
 
             b2_file_name = found_image_data.image_name
 
-            local_file_path = app.config['UPLOAD_FOLDER']
+            local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
 
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
-            downloaded_file.save_to(local_file_path)'''
+            downloaded_file.save_to(local_file_path)
             
             print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
