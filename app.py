@@ -1112,6 +1112,12 @@ def invoice():
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
             os.chdir(r"..")            
             
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER']
@@ -2394,6 +2400,12 @@ def invoicenumber():
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
             os.chdir(r"..")            
             
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER']
@@ -3017,6 +3029,12 @@ def invoicenumberresults():
             os.chdir(r"..")            
             
             print("New Template HTML")
+
+            # bucket
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             b2_file_name = found_image_data.image_name
 
