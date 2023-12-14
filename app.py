@@ -1444,10 +1444,18 @@ def invoice():
             pdf_final_url = file_url 
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
+            
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            
+            for row in found_template_data:
+                
+                TemplateData.query.delete()
+                db.session.commit()
+
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
@@ -2744,7 +2752,7 @@ def invoicenumberresults():
     list_sum = []
     formated_float = 0.00
     counter = 0
-   
+    
     
     
     try:
@@ -2997,12 +3005,19 @@ def invoicenumberresults():
             #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
             print("Template HTML Data", email_url_final)
             
+            
+            
+            
             new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
             db.session.add(new_template)
             db.session.commit()           
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+            
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).all()
+
             os.chdir(r"..")            
             
+            print("New Template HTML")
+
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER']
@@ -3010,6 +3025,9 @@ def invoicenumberresults():
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
+
+            print("b2_file_name", b2_file_name)
+            print('local_file_path', local_file_path)
             
             print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
@@ -3335,11 +3353,14 @@ def invoicenumberresults():
             pdf_final_url = file_url 
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
+
+
+
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
             
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
         
         else:
