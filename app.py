@@ -1156,8 +1156,8 @@ def invoice():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 15mm; \
-            top: 15mm; \
+            left: 5px; \
+            top: 5px; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
