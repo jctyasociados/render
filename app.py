@@ -1154,6 +1154,11 @@ def invoice():
             -pdf-frame-content: header_content; \
             left: 50pt; width: 512pt; top: 20pt; height: 170pt; \
             } \
+            @frame logo {             /* Static Frame */ \
+            -pdf-frame-content: logo; \
+            left: 15mm; \
+            top: 15mm; \
+            } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
             } \
@@ -1168,7 +1173,7 @@ def invoice():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='uploads/" + found_image_data.image_name + "'alt='Logo'> \
+            <img id='logo' src='uploads/" + found_image_data.image_name + "'alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
