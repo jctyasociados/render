@@ -1151,8 +1151,8 @@ def invoice():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -1827,8 +1827,8 @@ def invoiceedit():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -2474,8 +2474,8 @@ def invoicenumber():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -3128,8 +3128,8 @@ def invoicenumberresults():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -3904,8 +3904,8 @@ def invoicenumberbyein():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -4544,8 +4544,8 @@ def invoicenumberbydate():
             } \
             @frame logo {             /* Static Frame */ \
             -pdf-frame-content: logo; \
-            left: 10pt; \
-            top: 10pt; \
+            left: 20pt; \
+            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
