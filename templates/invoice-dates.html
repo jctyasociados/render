@@ -48,7 +48,7 @@ $( document ).ready(function() {
     beforeShow: function (input, inst) {
         setTimeout(function () {
             inst.dpDiv.css({
-                top: $(".datepicker").offset().top + 145,
+                top: $(".datepicker").offset().top + 45,
                 left: $(".datepicker").offset().left
             });
         }, 0);
@@ -59,7 +59,7 @@ $(".datepicker2").datepicker({
     beforeShow: function (input, inst) {
         setTimeout(function () {
             inst.dpDiv.css({
-                top: $(".datepicker2").offset().top + 145,
+                top: $(".datepicker2").offset().top + 45,
                 left: $(".datepicker2").offset().left
             });
         }, 0);
@@ -74,9 +74,9 @@ $(".datepicker2").datepicker({
 $(document).ready(function () {
 $(function(){
     
-    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd', orientation: 'bottom' });
     
-    $("#datepicker2").datepicker({ dateFormat: 'yy-mm-dd' });
+    $("#datepicker2").datepicker({ dateFormat: 'yy-mm-dd', orientation: 'bottom' });
 })
 });
 </script>
