@@ -41,6 +41,35 @@
 </div>
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/jquery-ui.js"></script>
+<script>
+$( document ).ready(function() {
+// Set Datepicker
+$(".datepicker").datepicker({
+    beforeShow: function (input, inst) {
+        setTimeout(function () {
+            inst.dpDiv.css({
+                top: $(".datepicker").offset().top + 45,
+                left: $(".datepicker").offset().left
+            });
+        }, 0);
+    }
+});
+
+$(".datepicker2").datepicker({
+    beforeShow: function (input, inst) {
+        setTimeout(function () {
+            inst.dpDiv.css({
+                top: $(".datepicker2").offset().top + 45,
+                left: $(".datepicker2").offset().left
+            });
+        }, 0);
+    }
+});
+    		
+		
+		
+});
+</script>
 <script type="text/javascript">
 $(document).ready(function () {
 $(function(){
