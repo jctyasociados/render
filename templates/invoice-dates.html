@@ -41,15 +41,21 @@
 </div>
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/jquery-ui.js"></script>
-<script type="text/javascript">
-$(document).ready(function () {
-$(function(){
-    
-    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd', orientation: 'top' });
-    
-    $("#datepicker2").datepicker({ dateFormat: 'yy-mm-dd', orientation: 'top' });
-})
-});
-</script>
+<script>
+        $(document).ready(function(){
+            var date_input=$('input[name="date_start"]'); //our date input has the name "date"
+            var date_input1=$('input[name="date_end"]'); //our date input has the name "date"
+            var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+            var options={
+                format: 'mm/dd/yyyy',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+                orientation: 'top' 
+            };
+            date_input.datepicker(options);
+            date_input1.datepicker(options);
+        })
+    </script>
 
 {% endblock %}
