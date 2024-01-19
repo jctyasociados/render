@@ -343,7 +343,7 @@ def upload():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
             #file_url = "https://" + endpoint_url + "/" + bucket_name + "/" + file_name
             #print(file_url)    
 
@@ -940,7 +940,7 @@ def invoice():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
         
 
@@ -1116,7 +1116,7 @@ def invoice():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
@@ -1468,7 +1468,7 @@ def invoice():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
             #file_url = "http://localhost:5000" + "/upload_file/" + full_name
@@ -1619,7 +1619,7 @@ def invoiceedit():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -1795,7 +1795,7 @@ def invoiceedit():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
             
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
@@ -2148,7 +2148,7 @@ def invoiceedit():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -2266,7 +2266,7 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -2443,7 +2443,7 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
             
 
             
@@ -2796,7 +2796,7 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -2913,7 +2913,7 @@ def invoicenumberresults():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -3090,7 +3090,7 @@ def invoicenumberresults():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
             
 
             
@@ -3453,7 +3453,7 @@ def invoicenumberresults():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -3696,7 +3696,7 @@ def invoicenumberbyein():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -3882,7 +3882,7 @@ def invoicenumberbyein():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -4232,7 +4232,7 @@ def invoicenumberbyein():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
                   
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -4343,7 +4343,7 @@ def invoicenumberbydate():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -4530,7 +4530,7 @@ def invoicenumberbydate():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
             pdf_final_url = file_url
             print(pdf_final_url)
@@ -4874,7 +4874,7 @@ def invoicenumberbydate():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace('v2', 'v1')
+            file_url = file_url.replace("v2", "v1")
 
             pdf_final_url = file_url
             os.chdir(r"..")
