@@ -1788,9 +1788,9 @@ button.ui-btn-icon-notext,
  * value.
  */
 .viewport-flip {
-	-webkit-perspective: 1000;
-	-moz-perspective: 1000;
-	perspective: 1000;
+	-webkit-perspective: 1000px;
+	-moz-perspective: 1000px;
+	perspective: 1000px;
 	position: absolute;
 }
 .flip {
@@ -4200,7 +4200,7 @@ html .ui-popup .ui-field-contain > label + .ui-flipswitch {
 	transition: transform 300ms ease;
 }
 /* Fix for Windows Phone issue #6349: unset the transition for transforms in case of fixed toolbars. */
-@media screen and ( max-device-width: 768px ) {
+@media screen and ( max-width: 768px ) {
 	.ui-page-header-fixed .ui-panel-animate.ui-panel-wrapper,
 	.ui-page-footer-fixed .ui-panel-animate.ui-panel-wrapper,
 	.ui-panel-animate.ui-panel-fixed-toolbar {
