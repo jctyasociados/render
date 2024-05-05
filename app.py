@@ -1542,13 +1542,15 @@ def invoiceedit():
             db.session.commit()
             
             for desc, price, quant, amount in zip(request.form.getlist('item_desc[]'), request.form.getlist('item_price[]'), request.form.getlist('item_quant[]'), request.form.getlist('amount[]')):
-                new_item = InvoiceItems(user_hashed, request.form['invoice_number'], desc, price, quant, amount)
+                new_item = InvoiceItems(user_hashed, request.form['invoice_number'], desc, price, quant ,amount)
                 db.session.add(new_item)
                 db.session.commit()
+            
             new_invoice_values = InvoiceValues(user_hashed, request.form['invoice_number'], request.form['subtotal'], request.form['totaltax'], request.form['grandtotal'])
             db.session.add(new_invoice_values)
             db.session.commit()
-            #return 'Invoice added to database
+            # Invoice added to database
+            
             found_user_data = db.session.query(User).filter_by(user_id_hash=(user_hashed)).all()
             found_invoice_data = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).first()
             found_invoice_items = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).all()
@@ -1572,22 +1574,27 @@ def invoiceedit():
             width, height = image.size
             
             #print(width, height)
-            finalimagename=name+"qrcode.png" 
+            finalimagename_qrcode = name + "qrcode.png" 
+            print(finalimagename_qrcode)
             basewidth = 150
             if width > 150:
                 img = Image.open(os.path.join(app.config['UPLOAD_FOLDER'], destination))
                 wpercent = (basewidth / float(img.size[0]))
                 hsize = int((float(img.size[1]) * float(wpercent)))
                 img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-                img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
-                new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename))
+                img.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
+                new__image = PIL.Image.open(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
                 width, height = new__image.size
+                #new__image = new__image.save(os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
                 
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             os.remove(destination)
-
-            file_name = finalimagename
+            #finalimagename_path = (os.path.join(app.config['UPLOAD_FOLDER'], finalimagename_qrcode))
+            
+            
+            
+            file_name = finalimagename_qrcode
 
             # bucket
 
@@ -1621,7 +1628,6 @@ def invoiceedit():
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
             file_url = file_url.replace("v2", "v1")
 
-
         
 
             #print(url_link)
@@ -1629,8 +1635,9 @@ def invoiceedit():
             #name_url_final = "http://localhost:5000" + "/upload_file/" + finalimagename_qrcode 
             
             name_url_final = file_url
-
             
+
+            print("QRcode url:", name_url_final)
             
             user_hashed=current_user.user_id_hash
             
@@ -1639,7 +1646,7 @@ def invoiceedit():
                 QRcodeData.query.delete()
                 db.session.commit()
             
-            new_image = QRcodeData(user_hashed, finalimagename, name_url_final, width, height)
+            new_image = QRcodeData(user_hashed, finalimagename_qrcode, name_url_final, width, height)
             db.session.add(new_image)
             db.session.commit()
             
@@ -1762,7 +1769,7 @@ def invoiceedit():
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
-            
+                        
             file_name = file_from
 
             # bucket
@@ -1770,13 +1777,13 @@ def invoiceedit():
             bucket_name = "iol-accountant"
             endpoint_url = "s3.us-west-000.backblazeb2.com"
             bucket = b2_api.get_bucket_by_name(bucket_name)
-
+            
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
 
                 local_file = Path(file_name).resolve()
-                metadata = {"Email": "Business"}
+                metadata = {"logo": "Business"}
 
                 uploaded_file = bucket.upload_local_file(
                 local_file=local_file,
@@ -1785,7 +1792,7 @@ def invoiceedit():
                 )
             except:
                 local_file = Path(file_name).resolve()
-                metadata = {"Email": "Business"}
+                metadata = {"Email Template": "iol-invoice"}
 
                 uploaded_file = bucket.upload_local_file(
                 local_file=local_file,
@@ -1796,21 +1803,21 @@ def invoiceedit():
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
             file_url = file_url.replace("v2", "v1")
-            
+
             
             #email_url_final = "https://iol-accountant.onrender.com" + "/static/uploads/" + "uploads/" + "email" + name + ".html"
             #print(email_url_final)
-            #file_url = "http://localhost:5000" + "/upload_file/" + file_from
-            pdf_final_url = file_url    
-                
+            email_url_final = file_url
+            #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
+            print("Template HTML Data", email_url_final)
             
-            print(pdf_final_url)
-            
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
+            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
-                        
+            os.chdir(r"..")            
+            
+            
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
@@ -1819,6 +1826,7 @@ def invoiceedit():
 
             downloaded_file.save_to(local_file_path)
             
+            print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
             <style> \
@@ -1836,7 +1844,7 @@ def invoiceedit():
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
             } \
-           @frame footer_frame {           /* Another static Frame */ \
+            @frame footer_frame {           /* Another static Frame */ \
             -pdf-frame-content: footer_content; \
             left: 50pt; width: 512pt; top: 780pt; height: 20pt; \
             } \
@@ -1847,7 +1855,7 @@ def invoiceedit():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px;' id='header_content'> \
             <tr> \
             <td style='vertical-align: top;' width='50%'> \
-            <img src='uploads/" + found_image_data.image_name + "' alt='Logo'> \
+            <img id='logo' src='uploads/" + found_image_data.image_name + "'alt='Logo'> \
             </td> \
             <td style='vertical-align: top; text-align:right;' width='50%'> \
             <span style='text-align:right;'>" + found_profile_data.businessname + "</span><br /> \
@@ -1916,7 +1924,7 @@ def invoiceedit():
             
             for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
-                sum += item.amount
+                sum += float(item.amount)
                 
                 list_sum.append(sum)
                 counter += 1
@@ -2008,8 +2016,8 @@ def invoiceedit():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
-                    for item in query.items:
                     
+                    for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
                         list_sum.append(sum)
@@ -2104,9 +2112,6 @@ def invoiceedit():
                 html_to_pdf(content, output)
     
             from_template(TEMPLATE_FILE, OUTPUT_FILENAME)
-                       
-            
-            
             
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
@@ -2115,6 +2120,7 @@ def invoiceedit():
             name=name.replace("/","$$$")
             name=name.replace(".","$$$") 
             full_name = name + ".pdf"
+
             
             file_name = full_name
 
@@ -2138,7 +2144,7 @@ def invoiceedit():
                 )
             except:
                 local_file = Path(file_name).resolve()
-                metadata = {"logo": "iol-invoice"}
+                metadata = {"PDF Invoice": "iol-invoice"}
 
                 uploaded_file = bucket.upload_local_file(
                 local_file=local_file,
@@ -2149,22 +2155,21 @@ def invoiceedit():
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
             file_url = file_url.replace("v2", "v1")
-                  
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
-            #pdf_final_url = "http://localhost:5000" + "/upload_file/" + full_name
-            pdf_final_url = file_url
+            #file_url = "http://localhost:5000" + "/upload_file/" + full_name
+            pdf_final_url = file_url 
+            print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
-                
             
-                    
+            
             
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
-            db.session.commit()           
-            
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            db.session.commit() 
 
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()           
+            
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
         
