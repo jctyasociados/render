@@ -1266,7 +1266,7 @@ def invoice():
                 list_number = len(list_sum) - 1
                 #list_number = len(list_sum)
                 taxes = float(found_invoice_data.taxes)
-                #subtotal = round(float(res_max), 2)
+                #subtotal = round(float(list_number), 2)
                 subtotal = round(float(list_sum[list_number]), 2)					                 
                 taxes = round(float(list_sum[list_number] * float(taxes/100)), 2)
                 amount = round(float(subtotal + taxes), 2)
@@ -1340,7 +1340,7 @@ def invoice():
                     
                     for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
-                        sum += item.amount
+                        sum += float(item.amount)
                         list_sum.append(sum)
                         counter += 1
                     f.write("</table>")
@@ -1356,7 +1356,7 @@ def invoice():
                     list_number = len(list_sum) - 1
                     #list_number = len(list_sum)
                     taxes = float(found_invoice_data.taxes)
-                    subtotal = round(float(res_max), 2)
+                    subtotal = round(float(list_number), 2)
                     taxes = round(float(list_sum[list_number] * float(taxes/100)), 2)
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
