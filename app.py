@@ -1263,7 +1263,7 @@ def invoice():
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
                 f.close()
-                list_number = len(list_sum) - counter
+                list_number = len(list_sum) - 1
                 #list_number = len(list_sum)
                 taxes = float(found_invoice_data.taxes)
                 subtotal = round(float(list_sum[list_number]), 2)
