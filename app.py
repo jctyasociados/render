@@ -112,6 +112,11 @@ def appindex():
 def appabout():
     return render_template('appabout.html', user=current_user)
     
+@app.route('/appget_started')
+@login_required
+def appget_started():
+    return render_template('app-get-started.html', user=current_user)
+    
 @app.route('/about')
 def about():
     return render_template('about.html')
