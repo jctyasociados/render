@@ -2447,7 +2447,7 @@ def invoicenumber():
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
-            
+          
             print("Constructing PDF html Template")
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
             f.write("<html><head> \
@@ -2457,11 +2457,6 @@ def invoicenumber():
             @frame header_frame {           /* Static frame */ \
             -pdf-frame-content: header_content; \
             left: 50pt; width: 512pt; top: 20pt; height: 170pt; \
-            } \
-            @frame logo {             /* Static Frame */ \
-            -pdf-frame-content: logo; \
-            left: 20pt; \
-            top: 20pt; \
             } \
             @frame content_frame {          /* Content Frame */ \
             left: 50pt; width: 512pt; top: 150pt; height: 632pt; \
@@ -2544,7 +2539,7 @@ def invoicenumber():
             
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
             
-            for item in query.items:
+            for item in reversed(query.items):
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                 sum += float(item.amount)
                 
@@ -2638,8 +2633,8 @@ def invoicenumber():
                 
                
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    for item in reversed(query.items):
                     
-                    for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
                         sum += item.amount
                         list_sum.append(sum)
@@ -2745,12 +2740,6 @@ def invoicenumber():
 
             
             file_name = full_name
-
-            # bucket
-
-            bucket_name = "iol-accountant"
-            endpoint_url = "s3.us-west-000.backblazeb2.com"
-            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -2776,7 +2765,6 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace("v2", "v1")
 
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -2784,20 +2772,16 @@ def invoicenumber():
             pdf_final_url = file_url 
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
-            
-            
-            
-            
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
-            
             found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
-
+            
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
+               
         
         else:
-            return render_template('invoice-number.html', user=current_user)
+            return render_template('invoice.html', user=current_user)
     except Exception as e:
         print(str(e))
         
