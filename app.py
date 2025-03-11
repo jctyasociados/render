@@ -28,6 +28,7 @@ from io import BytesIO
 from pathlib import Path
 from requests import Response
 import mimetypes
+import psycopg2
 
 app = Flask(__name__,
             static_url_path='', 
