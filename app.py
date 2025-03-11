@@ -159,7 +159,7 @@ def contact():
             body = html
             email_username = app.config['MAIL_USERNAME']
             sender_email = app.config['MAIL_DEFAULT_SENDER']
-            receiver_email = ['APP_MAIL_CONTACT_RECEIVER']
+            receiver_email = app.config['APP_MAIL_CONTACT_RECEIVER']
             password = app.config['MAIL_PASSWORD']
 
             # Create a multipart message and set headers
