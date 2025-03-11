@@ -2179,7 +2179,7 @@ def invoicenumber():
             found_profile_data = db.session.query(ProfileData).filter_by(user_id=(user_hashed)).first() 
             found_image_data = db.session.query(ImageData).filter_by(user_id=(user_hashed)).first() 
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
-            
+
             name=current_user.user_id_hash
             name=name.replace("/","$$$")
             name=name.replace(".","$$$")
@@ -2217,12 +2217,6 @@ def invoicenumber():
             
             file_name = finalimagename_qrcode
 
-            # bucket
-
-            bucket_name = "iol-accountant"
-            endpoint_url = "s3.us-west-000.backblazeb2.com"
-            bucket = b2_api.get_bucket_by_name(bucket_name)
-
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -2247,7 +2241,6 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -2278,7 +2271,7 @@ def invoicenumber():
                
             POST_PER_PAGE = 7
             page = 1
-            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
+            query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
             name=name.replace("/","$$$")
@@ -2394,12 +2387,6 @@ def invoicenumber():
                         
             file_name = file_from
             
-            # bucket
-
-            bucket_name = "iol-accountant"
-            endpoint_url = "s3.us-west-000.backblazeb2.com"
-            bucket = b2_api.get_bucket_by_name(bucket_name)
-
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -2424,7 +2411,6 @@ def invoicenumber():
 
             
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
-            file_url = file_url.replace("v2", "v1")
             
 
             
@@ -2438,9 +2424,8 @@ def invoicenumber():
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
-            os.chdir(r"..")            
-            
-            
+            os.chdir(r"..")  
+
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
@@ -2788,6 +2773,7 @@ def invoicenumber():
         
     #return render_template('invoice.html')
     return 'Done'
+            
 
 # invoicenumberresults
 
