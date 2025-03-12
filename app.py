@@ -941,8 +941,8 @@ def invoice():
                 file_infos=metadata,
                 )
 
-            
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
+            file_url = file_url.replace("v2", "v1")
 
 
         
@@ -1115,8 +1115,8 @@ def invoice():
                 file_infos=metadata,
                 )
 
-            
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
+            file_url = file_url.replace("v2", "v1")
             
 
             
@@ -1463,8 +1463,8 @@ def invoice():
                 file_infos=metadata,
                 )
 
-            
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
+            file_url = file_url.replace("v2", "v1")
 
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
@@ -2785,8 +2785,8 @@ def invoicenumber():
                 file_infos=metadata,
                 )
 
-            
             file_url = b2_api.get_download_url_for_fileid(uploaded_file.id_)
+            file_url = file_url.replace("v2", "v1")
 
             #pdf_final_url = "https://iol-accountant.onrender.com" + "/uploads" + "/" + name + ".pdf"
             #print(pdf_final_url)
