@@ -21,6 +21,7 @@ class Config(object):
     # gmail authentication
     MAIL_USERNAME = os.getenv("APP_MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("APP_MAIL_PASSWORD")
+    MAIL_RECEIVER = os.getenv("APP_MAIL_CONTACT_RECEIVER")
     # mail accounts
     MAIL_DEFAULT_SENDER = os.getenv("APP_MAIL_USERNAME_SENDER")
     RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_KEY")
