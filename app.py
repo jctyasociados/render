@@ -3531,12 +3531,7 @@ def invoicebyein():
 def invoicebynumber():
     user_hashed=current_user.user_id_hash
     
-    #POST_PER_PAGE = 2
-
-    #page = request.args.get('page', 1, type=int)
     if request.method == 'POST':
-        
-        
     
         found_invoice = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=request.form['invoice_number']).first()
         rows = db.session.query(InvoiceData).filter_by(user_id=(user_hashed), invoice_number=request.form['invoice_number']).count();
@@ -3595,8 +3590,15 @@ def invoicebydates():
 def searchinvoicebydates():
     user_hashed=current_user.user_id_hash
     
-    
-    return render_template('invoice-dates.html', user=current_user)   
+    return render_template('invoice-dates.html', user=current_user)
+
+
+@app.route('/searchinvoicebynumber', methods=['GET', 'POST'])
+@login_required
+def searchinvoicebynumber():
+    user_hashed = current_user.user_id_hash
+
+    return render_template('invoice-number.html', user=current_user)
     
 @app.route('/invoicenumberbyein', methods=['GET', 'POST'])
 @login_required
