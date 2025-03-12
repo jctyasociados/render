@@ -28,7 +28,6 @@ from io import BytesIO
 from pathlib import Path
 from requests import Response
 import mimetypes
-import psycopg2
 
 app = Flask(__name__,
             static_url_path='', 
@@ -160,7 +159,7 @@ def contact():
             body = html
             email_username = app.config['MAIL_USERNAME']
             sender_email = app.config['MAIL_DEFAULT_SENDER']
-            receiver_email = app.config['MAIL_RECEIVER']
+            receiver_email = "jctyasociados@gmail.com"
             password = app.config['MAIL_PASSWORD']
 
             # Create a multipart message and set headers
@@ -218,7 +217,7 @@ def appcontact():
             body = html
             email_username = app.config['MAIL_USERNAME']
             sender_email = app.config['MAIL_DEFAULT_SENDER']
-            receiver_email = app.config['MAIL_RECEIVER']
+            receiver_email = "jctyasociados@gmail.com"
             password = app.config['MAIL_PASSWORD']
 
             # Create a multipart message and set headers
@@ -3525,16 +3524,10 @@ def invoicebynumber():
 @app.route('/searchinvoicebyein', methods=['GET', 'POST'])
 @login_required
 def searchinvoicebyein():
-    user_hashed=current_user.user_id_hash    
+    user_hashed=current_user.user_id_hash
+    
     
     return render_template('invoice-ein.html', user=current_user)
-
-@app.route('/searchinvoicebynumber', methods=['GET', 'POST'])
-@login_required
-def searchinvoicebynumber():
-    user_hashed = current_user.user_id_hash
-
-    return render_template('invoice-number.html', user=current_user)
 
 @app.route('/invoicebydates', methods=['GET', 'POST'])
 @login_required
