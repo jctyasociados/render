@@ -74,4 +74,3 @@ Werkzeug==0.16.0
 xhtml2pdf==0.2.11
 b2sdk==1.27.0
 pathlib==1.0.1
-google-cloud-api-keys
