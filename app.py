@@ -1472,7 +1472,8 @@ def invoice():
             pdf_final_url = file_url 
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
+            #new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
+            new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
             db.session.add(new_template)
             db.session.commit()        
             found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
