@@ -159,7 +159,7 @@ def contact():
             body = html
             email_username = app.config['MAIL_USERNAME']
             sender_email = app.config['MAIL_DEFAULT_SENDER']
-            receiver_email = "jctyasociados@gmail.com"
+            receiver_email = app.config['MAIL_RECEIVER']
             password = app.config['MAIL_PASSWORD']
 
             # Create a multipart message and set headers
@@ -217,7 +217,7 @@ def appcontact():
             body = html
             email_username = app.config['MAIL_USERNAME']
             sender_email = app.config['MAIL_DEFAULT_SENDER']
-            receiver_email = "jctyasociados@gmail.com"
+            receiver_email = app.config['MAIL_RECEIVER']
             password = app.config['MAIL_PASSWORD']
 
             # Create a multipart message and set headers
@@ -250,7 +250,9 @@ def appcontact():
 
 @app.route('/b2-image/<filename>', methods=('GET',))
 def b2_image(filename):
-    
+    bucket_name = "iol-accountant"
+    endpoint_url = "s3.us-west-000.backblazeb2.com"
+    bucket = b2_api.get_bucket_by_name(bucket_name)
     file = bucket.download_file_by_name(filename)
     f = BytesIO()
     file.save(f)
@@ -287,8 +289,8 @@ def upload():
             extension=filename.split(".")
             extension=str(extension[1])
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+"."+extension
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], destination))
             
@@ -392,8 +394,8 @@ def send_html():
     found_invoice_data = db.session.query(InvoiceData).filter_by(user_id=(user_hashed)).first()     
     user_hashed=current_user.user_id_hash
     name=user_hashed
-    name=name.replace("/","$$$")
-    name=name.replace(".","$$$")
+    name=name.replace("/", "$$$")
+    name=name.replace(".", "$$$")
     
     subject = "Invoice from" + " " + found_profile_data.businessname
     file = open(app.config['UPLOAD_FOLDER'] + "/email" + name + ".html", "r")
@@ -418,8 +420,8 @@ def send_html():
         
     
     name=user_hashed
-    name=name.replace("/","$$$")
-    name=name.replace(".","$$$")
+    name=name.replace("/", "$$$")
+    name=name.replace(".", "$$$")
     
     filename_app = app.config['UPLOAD_FOLDER'] + "/" + name + ".pdf"
     
@@ -579,7 +581,7 @@ def recover():
       print(found_user.email)
       return render_template('password-recover.html', sitekey=sitekey)
     else:
-      flash("Username not found","warning")
+      flash("Username not found", "warning")
       return render_template('password-recover.html', sitekey=sitekey)
           	
 
@@ -851,7 +853,7 @@ def invoice():
         if request.method == 'POST':
             invoice_date=request.form['invoice_date']
             #print(invoice_date)
-            date_inv=invoice_date.replace("-",",")
+            date_inv=invoice_date.replace("-", ", ")
             y, m, d = date_inv.split(',')
             date_inv = date(int(y), int(m), int(d))
             
@@ -877,8 +879,8 @@ def invoice():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -912,6 +914,10 @@ def invoice():
             
             
             file_name = finalimagename_qrcode
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
 
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -970,12 +976,12 @@ def invoice():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -991,7 +997,7 @@ def invoice():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1018,7 +1024,7 @@ def invoice():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1031,7 +1037,7 @@ def invoice():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1044,26 +1050,26 @@ def invoice():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -1074,15 +1080,19 @@ def invoice():
                 db.session.commit()
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
             file_from = "email" + name + ".html"
                         
             file_name = file_from
-            
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+
             try:
                 for version in bucket.list_file_versions(file_name):
                     bucket.delete_file_version(version.id_, version.file_name)
@@ -1120,18 +1130,22 @@ def invoice():
             db.session.add(new_template)
             db.session.commit()           
             found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
-            os.chdir(r"..")  
+            os.chdir(r"..")
+
 
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
-
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
+            # Logo goes here
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
           
             print("Constructing PDF html Template")
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -1163,7 +1177,7 @@ def invoice():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1190,7 +1204,7 @@ def invoice():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1204,10 +1218,10 @@ def invoice():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -1219,7 +1233,7 @@ def invoice():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in reversed(query.items):
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -1238,7 +1252,7 @@ def invoice():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -1250,7 +1264,7 @@ def invoice():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -1259,12 +1273,12 @@ def invoice():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -1284,7 +1298,7 @@ def invoice():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1298,10 +1312,10 @@ def invoice():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -1314,7 +1328,7 @@ def invoice():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     for item in reversed(query.items):
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -1332,36 +1346,36 @@ def invoice():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -1416,12 +1430,16 @@ def invoice():
             os.chdir(upload_path)
 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             full_name = name + ".pdf"
 
             
             file_name = full_name
+
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             
             try:
                 for version in bucket.list_file_versions(file_name):
@@ -1457,7 +1475,7 @@ def invoice():
             new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             db.session.add(new_template)
             db.session.commit()        
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
@@ -1486,7 +1504,7 @@ def invoiceedit():
         if request.method == 'POST':
             invoice_date=request.form['invoice_date']
             #print(invoice_date)
-            date_inv=invoice_date.replace("-",",")
+            date_inv=invoice_date.replace("-", ", ")
             y, m, d = date_inv.split(',')
             date_inv = date(int(y), int(m), int(d))
             
@@ -1535,8 +1553,8 @@ def invoiceedit():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -1634,12 +1652,12 @@ def invoiceedit():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -1655,7 +1673,7 @@ def invoiceedit():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1682,7 +1700,7 @@ def invoiceedit():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1695,7 +1713,7 @@ def invoiceedit():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -1708,26 +1726,26 @@ def invoiceedit():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -1738,8 +1756,8 @@ def invoiceedit():
                 db.session.commit()
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
@@ -1796,13 +1814,15 @@ def invoiceedit():
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
-
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
             
             print("Constructing PDF html Template")
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -1839,7 +1859,7 @@ def invoiceedit():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1866,7 +1886,7 @@ def invoiceedit():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1880,10 +1900,10 @@ def invoiceedit():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -1895,7 +1915,7 @@ def invoiceedit():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -1914,7 +1934,7 @@ def invoiceedit():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -1926,7 +1946,7 @@ def invoiceedit():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -1935,12 +1955,12 @@ def invoiceedit():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -1960,7 +1980,7 @@ def invoiceedit():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -1974,10 +1994,10 @@ def invoiceedit():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -1990,7 +2010,7 @@ def invoiceedit():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     
                     for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -2008,36 +2028,36 @@ def invoiceedit():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -2092,8 +2112,8 @@ def invoiceedit():
             os.chdir(upload_path)
 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             full_name = name + ".pdf"
 
             
@@ -2180,8 +2200,8 @@ def invoicenumber():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -2280,12 +2300,12 @@ def invoicenumber():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -2301,7 +2321,7 @@ def invoicenumber():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2328,7 +2348,7 @@ def invoicenumber():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2341,7 +2361,7 @@ def invoicenumber():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2354,26 +2374,26 @@ def invoicenumber():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -2384,8 +2404,8 @@ def invoicenumber():
                 db.session.commit()
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
@@ -2443,13 +2463,15 @@ def invoicenumber():
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
-
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
           
             print("Constructing PDF html Template")
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -2481,7 +2503,7 @@ def invoicenumber():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -2508,7 +2530,7 @@ def invoicenumber():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -2522,10 +2544,10 @@ def invoicenumber():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -2537,7 +2559,7 @@ def invoicenumber():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in reversed(query.items):
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -2556,7 +2578,7 @@ def invoicenumber():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -2568,7 +2590,7 @@ def invoicenumber():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -2577,12 +2599,12 @@ def invoicenumber():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -2602,7 +2624,7 @@ def invoicenumber():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -2616,10 +2638,10 @@ def invoicenumber():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -2632,7 +2654,7 @@ def invoicenumber():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     for item in reversed(query.items):
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -2650,36 +2672,36 @@ def invoicenumber():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -2734,8 +2756,8 @@ def invoicenumber():
             os.chdir(upload_path)
 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             full_name = name + ".pdf"
 
             
@@ -2813,8 +2835,8 @@ def invoicenumberresults():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -2911,12 +2933,12 @@ def invoicenumberresults():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -2932,7 +2954,7 @@ def invoicenumberresults():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2959,7 +2981,7 @@ def invoicenumberresults():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2972,7 +2994,7 @@ def invoicenumberresults():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -2985,26 +3007,26 @@ def invoicenumberresults():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -3015,8 +3037,8 @@ def invoicenumberresults():
                 db.session.commit()
             
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
@@ -3081,7 +3103,9 @@ def invoicenumberresults():
             b2_file_name = found_image_data.image_name
 
             local_file_path = app.config['UPLOAD_FOLDER'] + "/" + b2_file_name
-
+            bucket_name = "iol-accountant"
+            endpoint_url = "s3.us-west-000.backblazeb2.com"
+            bucket = b2_api.get_bucket_by_name(bucket_name)
             downloaded_file = bucket.download_file_by_name(b2_file_name)
 
             downloaded_file.save_to(local_file_path)
@@ -3090,7 +3114,7 @@ def invoicenumberresults():
             print('local_file_path', local_file_path)
             
             print("Constructing PDF html Template")
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -3127,7 +3151,7 @@ def invoicenumberresults():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -3154,7 +3178,7 @@ def invoicenumberresults():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -3168,10 +3192,10 @@ def invoicenumberresults():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -3183,7 +3207,7 @@ def invoicenumberresults():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -3202,7 +3226,7 @@ def invoicenumberresults():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -3214,7 +3238,7 @@ def invoicenumberresults():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -3223,12 +3247,12 @@ def invoicenumberresults():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -3248,7 +3272,7 @@ def invoicenumberresults():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -3262,10 +3286,10 @@ def invoicenumberresults():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -3278,7 +3302,7 @@ def invoicenumberresults():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     
                     for item in query.items:           
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -3296,36 +3320,36 @@ def invoicenumberresults():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -3380,8 +3404,8 @@ def invoicenumberresults():
             os.chdir(upload_path)
 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             full_name = name + ".pdf"
 
             
@@ -3599,8 +3623,8 @@ def invoicenumberbyein():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -3700,12 +3724,12 @@ def invoicenumberbyein():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$") 
+            name=name.replace(".", "$$$")
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -3721,7 +3745,7 @@ def invoicenumberbyein():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -3748,7 +3772,7 @@ def invoicenumberbyein():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -3761,7 +3785,7 @@ def invoicenumberbyein():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -3774,26 +3798,26 @@ def invoicenumberbyein():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -3807,8 +3831,8 @@ def invoicenumberbyein():
             
                 
             name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$") 
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
 
@@ -3869,7 +3893,7 @@ def invoicenumberbyein():
 
             downloaded_file.save_to(local_file_path)
 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -3906,7 +3930,7 @@ def invoicenumberbyein():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -3933,7 +3957,7 @@ def invoicenumberbyein():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -3947,10 +3971,10 @@ def invoicenumberbyein():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -3962,7 +3986,7 @@ def invoicenumberbyein():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -3981,7 +4005,7 @@ def invoicenumberbyein():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -3993,7 +4017,7 @@ def invoicenumberbyein():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -4002,12 +4026,12 @@ def invoicenumberbyein():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -4027,7 +4051,7 @@ def invoicenumberbyein():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -4041,10 +4065,10 @@ def invoicenumberbyein():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -4057,7 +4081,7 @@ def invoicenumberbyein():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -4075,36 +4099,36 @@ def invoicenumberbyein():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -4160,8 +4184,8 @@ def invoicenumberbyein():
             os.chdir(upload_path)
 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$") 
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$") 
             full_name = name + ".pdf"
 
             file_name = full_name
@@ -4246,8 +4270,8 @@ def invoicenumberbydate():
             found_invoice_items_rows = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).count()
             
             name=current_user.user_id_hash
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             destination=name+"orig"+".png"
             qrcodepath = os.path.join(app.config['UPLOAD_FOLDER'], destination)
             print('qrcodepath: ', qrcodepath)
@@ -4347,12 +4371,12 @@ def invoicenumberbydate():
             query = db.session.query(InvoiceItems).filter_by(user_id=(user_hashed), invoice_number=(request.form['invoice_number'])).order_by(InvoiceItems.id.asc()).paginate(page=page, per_page=POST_PER_PAGE)
             
             name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$") 
+            name=name.replace(".", "$$$")
             #write html and pdf code
             print(app.config['UPLOAD_FOLDER'])
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "w")
             f.write("<html><head> \
             </head> \
             <body style='font-family: Arial, Helvetica, Verdana; font-size: 14px;'> \
@@ -4368,7 +4392,7 @@ def invoicenumberbydate():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -4395,7 +4419,7 @@ def invoicenumberbydate():
             <span style='text-align:left;'>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -4408,7 +4432,7 @@ def invoicenumberbydate():
             <span style='text-align:left;'>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
                 f.write("<span style='text-align:left;'>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
@@ -4421,26 +4445,26 @@ def invoicenumberbydate():
             </table> \
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             for item in found_invoice_items:
                 f.write("<tr><td style='width: 25%;'><p><strong>Description</strong></p><p>" + item.item_desc +"</p></td><td style='width: 25%;'><p><strong>Price</strong></p><p>" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</p></td><td style='width: 25%;'><p><strong>Quantity</strong></p><p>" + str(item.item_quant) + "</p></td><td style='width: 25%;'><p><strong>Total</strong></p><p>" + format_currency(str(item.amount), 'USD', locale='en_US') + "</p></td></tr>")
             f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='" + found_qrcode_data.image_url + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width:[] 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
             f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" + "email" + name + ".html", "a")
             f.write("</table></td></tr></table>")
             f.close()            
             
@@ -4455,8 +4479,8 @@ def invoicenumberbydate():
                 
                 
             name=user_hashed
-            name=name.replace("/","$$$")
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$")
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
             #file_from = app.config['UPLOAD_FOLDER'] + "/email" + name + ".html" # This is name of the file to be uploaded
@@ -4512,7 +4536,7 @@ def invoicenumberbydate():
 
             downloaded_file.save_to(local_file_path)
 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","w")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "w")
             f.write("<html><head> \
             <style> \
             @page { \
@@ -4549,7 +4573,7 @@ def invoicenumberbydate():
             <span style='text-align:right;'>" + found_profile_data.address1 + "</span><br />")
             f.close()
             if found_profile_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_profile_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -4576,7 +4600,7 @@ def invoicenumberbydate():
             <span>" + found_invoice_data.address + "</span><br />")
             f.close()
             if found_invoice_data.address2 != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                 f.close()
             f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -4590,10 +4614,10 @@ def invoicenumberbydate():
             <span>" + found_invoice_data.address_shipping + "</span><br />")
             f.close()
             if found_invoice_data.address2_shipping != '':
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                 f.close()
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
             </td></tr></table> \
             </td> \
@@ -4605,7 +4629,7 @@ def invoicenumberbydate():
             <table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
             f.close()
             
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             
             for item in query.items:
                 f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -4624,7 +4648,7 @@ def invoicenumberbydate():
             
             if found_invoice_items_rows > POST_PER_PAGE:
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
                  <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> ")
@@ -4636,7 +4660,7 @@ def invoicenumberbydate():
                 amount = round(float(subtotal + taxes), 2)
                 print(subtotal)
                 
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
@@ -4645,12 +4669,12 @@ def invoicenumberbydate():
                 f.close()
                 
                 while(counter <= found_invoice_items_rows):
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<div><pdf:nextpage></div>")
                     f.close()        
                     page = query.next_num
                     query = query.next(error_out=False)
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%'> \
                 <tr> \
                 <td style='width=50%'> \
@@ -4670,7 +4694,7 @@ def invoicenumberbydate():
                 <span>" + found_invoice_data.address + "</span><br />")
                     f.close()
                     if found_invoice_data.address2 != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2 + "</span><br />")
                         f.close()
                     f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
@@ -4684,10 +4708,10 @@ def invoicenumberbydate():
                 <span>" + found_invoice_data.address_shipping + "</span><br />")
                     f.close()
                     if found_invoice_data.address2_shipping != '':
-                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                        f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                         f.write("<span>" + found_invoice_data.address2_shipping + "</span><br />")
                         f.close()
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<span>" + found_invoice_data.city_shipping + "</span>&nbsp;<span>" + found_invoice_data.state_shipping + "</span>&nbsp;<span>" + found_invoice_data.zip_shipping + "</span> \
                 </td></tr></table> \
                 </td> \
@@ -4700,7 +4724,7 @@ def invoicenumberbydate():
                     f.close()
                 
                
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     for item in query.items:
                     
                         f.write("<tr><td style='width: 25%'><span><strong>Description</strong><br />" + item.item_desc +"</span></td><td style='width: 25%'><span><strong>Price</strong><br />" + format_currency(str(item.item_price), 'USD', locale='en_US') + "</span></td><td style='width: 25%'><span><strong>Quantity</strong><br />" + str(item.item_quant) + "</span></td><td style='width: 25%'><span><strong>Total</strong><br />" + format_currency(str(item.amount), 'USD', locale='en_US') + "</span></td></tr>")
@@ -4718,36 +4742,36 @@ def invoicenumberbydate():
                     amount = round(float(subtotal + taxes), 2)
                     print(subtotal)
                 
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(subtotal), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(taxes), 'USD', locale='en_US') + "</td></tr>")
                     f.write("<tr><td style='width: 50%'><strong>Total</strong></td>")
                     f.write("<td style='width: 50%'>" + format_currency(str(amount), 'USD', locale='en_US') + "</td></tr>")
                     f.close()
             
-                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                    f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                     f.write("</table></table>")
                     f.close()
                     counter += 1
             else:
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table>")
                 f.close()
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'> \
             <tr><td style='width: 50%'>" + "<img src='uploads/" + found_qrcode_data.image_name + "' alt='QRcode'>" + "</td><td style='width: 50%'><table border='0' cellspacing='5' cellpadding='5' width='100%' style='font-family: Arial, Helvetica, Verdana; font-size: 14px; margin-top:20px;'>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("<tr><td style='width: 50%'><strong>Subtotal</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.subtotal), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Taxes</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.taxes), 'USD', locale='en_US') + "</td></tr>")
                 f.write("<tr><td style='width: 50%'><strong>Total</strong></td><td style='width: 50%'>" + format_currency(str(found_invoice_values.total), 'USD', locale='en_US') + "</td></tr>")
                 f.close()
             
-                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+                f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
                 f.write("</table></table>")
                 f.close() 
-            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html","a")
+            f=open(app.config['UPLOAD_FOLDER'] + "/" +  name + ".html", "a")
             f.write("<div id='footer_content' style='text-align: center;'>page <pdf:pagenumber> \
             of <pdf:pagecount> \
             </div> \
@@ -4799,8 +4823,8 @@ def invoicenumberbydate():
             from_template(TEMPLATE_FILE, OUTPUT_FILENAME)
             
             name=user_hashed
-            name=name.replace("/","$$$") 
-            name=name.replace(".","$$$")
+            name=name.replace("/", "$$$") 
+            name=name.replace(".", "$$$")
             upload_path = app.config['UPLOAD_FOLDER']
             os.chdir(upload_path)
 
