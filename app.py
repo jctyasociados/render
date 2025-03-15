@@ -1475,8 +1475,8 @@ def invoice():
             #new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
             found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
             if found_template_data_rows > 0:
-                found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).all()
-                db.session.delete(found_template_data)
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                #db.session.delete(found_template_data)
                 db.session.commit()
                 new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
                 db.session.add(new_template)
