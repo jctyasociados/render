@@ -1125,11 +1125,21 @@ def invoice():
             email_url_final = file_url
             #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
             print("Template HTML Data", email_url_final)
-            
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
-            db.session.add(new_template)
-            db.session.commit()           
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).first()
             os.chdir(r"..")
 
 
@@ -1815,10 +1825,26 @@ def invoiceedit():
             #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
             print("Template HTML Data", email_url_final)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
-            db.session.add(new_template)
-            db.session.commit()           
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+            #new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+            #db.session.add(new_template)
+            #db.session.commit()
+            #found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).first()
+
             os.chdir(r"..")            
             
             
@@ -2170,12 +2196,27 @@ def invoiceedit():
             
             
             
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit() 
+            #new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
+            #db.session.add(new_template)
+            #db.session.commit()
 
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()           
-            
+            #found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
+
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
         
@@ -2464,10 +2505,26 @@ def invoicenumber():
             #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
             print("Template HTML Data", email_url_final)
             
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
-            db.session.add(new_template)
-            db.session.commit()           
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+            #new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+            #db.session.add(new_template)
+            #db.session.commit()
+            #found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).first()
+
             os.chdir(r"..")            
             
             
@@ -2805,10 +2862,21 @@ def invoicenumber():
             pdf_final_url = file_url 
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit()        
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
@@ -3096,15 +3164,21 @@ def invoicenumberresults():
             email_url_final = file_url
             #email_url_final = "http://localhost:5000" + "/upload_file/" + file_from
             print("Template HTML Data", email_url_final)
-            
-            
-            
-            
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
-            db.session.add(new_template)
-            db.session.commit()           
-            
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).all()
+
+            found_template_data_rows = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).first()
 
             os.chdir(r"..")            
             
@@ -3461,13 +3535,20 @@ def invoicenumberresults():
             print("PDF URL here", pdf_final_url)
             os.chdir(r"..")
 
-
-
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit()        
-            
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).all()
+            found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
         
@@ -3893,11 +3974,21 @@ def invoicenumberbyein():
             os.chdir(r"..")
 
             print(pdf_final_url)
-            
-            new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit()           
-            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateHTMLData(found_invoice_data.email, user_hashed, email_url_final)
+                db.session.add(new_template)
+                db.session.commit()
+            found_html_template_data = db.session.query(TemplateHTMLData).filter_by(user_id=user_hashed).first()
                         
             b2_file_name = found_image_data.image_name
 
@@ -4241,12 +4332,21 @@ def invoicenumberbyein():
 
             pdf_final_url = file_url
             os.chdir(r"..")
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit()           
 
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+            found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                #db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            #here goes update
+            else:
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
@@ -4880,13 +4980,21 @@ def invoicenumberbydate():
 
             pdf_final_url = file_url
             os.chdir(r"..")
-            
-            
-            new_template = TemplateData(found_invoice_data.email, user_hashed, pdf_final_url)
-            db.session.add(new_template)
-            db.session.commit()           
-            
-            found_template_data = db.session.query(TemplateData).filter_by(user_id=(user_hashed)).first()
+
+            found_template_data_rows = db.session.query(TemplateData).filter_by(user_id=user_hashed).count()
+            if found_template_data_rows > 0:
+                db.session.query(TemplateData).filter_by(user_id=user_hashed).delete()
+                # db.session.delete(found_template_data)
+                db.session.commit()
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            # here goes update
+            else:
+                new_template = TemplateData(found_invoice_data.email, user_hashed, file_url)
+                db.session.add(new_template)
+                db.session.commit()
+            found_template_data = db.session.query(TemplateData).filter_by(user_id=user_hashed).first()
             
             return render_template('invoice-html.html', user=current_user, invoice_data=found_invoice_data, items_data=found_invoice_items, invoice_values=found_invoice_values, profile_data=found_profile_data, image_data=found_image_data, template_data=found_template_data, qrcode_data=found_qrcode_data)   
                
